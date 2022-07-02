@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
 ]
 
 MY_APPS = [
@@ -44,9 +45,40 @@ MY_APPS = [
     "user_profile.apps.UserProfileConfig",
 ]
 
-THIRD_PARTY_APPS = []
+THIRD_PARTY_APPS = [
+    # Social Login Packages
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+]
 
 INSTALLED_APPS += MY_APPS + THIRD_PARTY_APPS
+
+# Social login settings
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+SITE_ID = 1
+LOGIN_REDIRECT_URL = "home"
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        },
+    }
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -63,7 +95,7 @@ ROOT_URLCONF = "DatingAppProject.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
