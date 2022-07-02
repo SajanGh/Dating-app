@@ -31,17 +31,22 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    # new
-    "accounts.apps.AccountsConfig",
-    # pre-built
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # 3rd-party packages
 ]
+
+MY_APPS = [
+    "accounts.apps.AccountsConfig",
+    "user_profile.apps.UserProfileConfig",
+]
+
+THIRD_PARTY_APPS = []
+
+INSTALLED_APPS += MY_APPS + THIRD_PARTY_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
