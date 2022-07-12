@@ -1,9 +1,12 @@
 import datetime
 from bisect import bisect
+from django.conf import settings
 from django.db import models
-from django.contrib.auth import get_user_model
 
-User = get_user_model()
+# from django.contrib.auth import get_user_model
+
+# User = get_user_model()
+User = settings.AUTH_USER_MODEL
 
 
 # Profile model for user-- contains personal information
@@ -17,12 +20,12 @@ class UserProfile(models.Model):
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    first_name = models.CharField(max_length=50, null=True)
+    last_name = models.CharField(max_length=50, null=True)
     bio = models.TextField(max_length=100, default="", blank=False)
-    date_of_birth = models.DateField()
-    address = models.CharField(max_length=100)
-    phone = models.CharField(max_length=10)
+    date_of_birth = models.DateField(null=True)
+    address = models.CharField(max_length=100, null=True)
+    phone = models.CharField(max_length=10, null=True)
     gender = models.CharField(choices=GENDER_CHOICES, max_length=6, default="MALE")
     looking_for = models.CharField(
         choices=LOOKING_FOR_CHOICES, max_length=6, default="BOTH"
@@ -52,4 +55,5 @@ class UserProfile(models.Model):
         return signs[bisect(signs, (month, day))][2]
 
     def __str__(self):
-        return self.first_name + " " + self.last_name
+        # return self.first_name + " " + self.last_name
+        return self.user.email

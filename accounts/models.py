@@ -1,4 +1,8 @@
 from django.db import models
+from django.dispatch import receiver
+from allauth.account.signals import user_signed_up
+from django.shortcuts import redirect
+from user_profile.models import UserProfile
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 
@@ -65,3 +69,14 @@ class User(AbstractBaseUser):
         "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
+
+
+@receiver(user_signed_up)
+def create_user_profile_instance(user, sociallogin=None, **kwargs):
+    UserProfile.objects.create(user=user)
+    if sociallogin:
+        if sociallogin.account.provider == "google":
+            user.profile.first_name = sociallogin.account.extra_data["given_name"]
+            user.profile.last_name = sociallogin.account.extra_data["family_name"]
+            user.profile.save()
+    return redirect("update_profile")
