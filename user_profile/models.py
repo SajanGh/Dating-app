@@ -1,4 +1,5 @@
 import datetime
+import uuid
 from bisect import bisect
 from django.conf import settings
 from django.db import models
@@ -19,6 +20,9 @@ class UserProfile(models.Model):
         ("BOTH", "Both"),
     ]
 
+    id = models.UUIDField(
+        primary_key=True, default=uuid.uuid4, editable=False, db_index=True
+    )
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     first_name = models.CharField(max_length=50, null=True)
     last_name = models.CharField(max_length=50, null=True)

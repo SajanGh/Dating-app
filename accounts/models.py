@@ -1,4 +1,5 @@
 from django.db import models
+import uuid
 from django.dispatch import receiver
 from allauth.account.signals import user_signed_up
 from django.shortcuts import redirect
@@ -38,6 +39,9 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
+    id = models.UUIDField(
+        primary_key=True, default=uuid.uuid4, editable=False, db_index=True
+    )
     email = models.EmailField(
         verbose_name="email address",
         max_length=255,
