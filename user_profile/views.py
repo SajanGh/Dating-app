@@ -1,5 +1,7 @@
-from django.http import HttpResponse
 from django.shortcuts import render
+from django.urls import reverse_lazy
+from django.views.generic import UpdateView
+from user_profile.models import UserProfile
 from django.contrib.auth.decorators import login_required
 from DatingAppProject.decorators import profile_update_required
 
@@ -11,10 +13,17 @@ def index(request):
     return render(request, "index.html", context)
 
 
-def create_profile(request):
-    pass
-
-
-@login_required
-def update_profile(request):
-    return HttpResponse("UPDATE PROFILE FIRST")
+class UpdateProfile(UpdateView):
+    model = UserProfile
+    template_name = "profile/update_profile.html"
+    success_url = reverse_lazy("index")
+    fields = [
+        "first_name",
+        "last_name",
+        "bio",
+        "date_of_birth",
+        "address",
+        "phone",
+        "gender",
+        "looking_for",
+    ]
