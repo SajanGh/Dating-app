@@ -83,4 +83,3 @@ def create_user_profile_instance(user, sociallogin=None, **kwargs):
             user.profile.first_name = sociallogin.account.extra_data["given_name"]
             user.profile.last_name = sociallogin.account.extra_data["family_name"]
             user.profile.save()
-    return redirect("update_profile")
