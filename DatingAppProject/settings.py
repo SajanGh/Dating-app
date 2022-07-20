@@ -57,6 +57,8 @@ THIRD_PARTY_APPS = [
     # Django Crispy Forms
     "crispy_forms",
     "crispy_bootstrap5",
+    # for cleaning old files and images after update
+    "django_cleanup",
 ]
 
 INSTALLED_APPS += MY_APPS + THIRD_PARTY_APPS
