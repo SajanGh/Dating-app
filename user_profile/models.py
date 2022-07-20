@@ -1,13 +1,25 @@
 import datetime
+import os
 import uuid
 from bisect import bisect
 from django.conf import settings
 from django.db import models
 
-# from django.contrib.auth import get_user_model
-
-# User = get_user_model()
 User = settings.AUTH_USER_MODEL
+
+
+# Renames user uploaded images
+def path_and_rename(instance, filename):
+    upload_to = "media/profile_images"
+    ext = filename.split(".")[-1]
+    # get filename
+    if instance.pk:
+        filename = "{}.{}".format(instance.pk, ext)
+    else:
+        # set filename as random string
+        filename = "{}.{}".format(uuid.uuid4().hex, ext)
+    # return the whole path to the file
+    return os.path.join(upload_to, filename)
 
 
 # Profile model for user-- contains personal information
@@ -34,28 +46,29 @@ class UserProfile(models.Model):
     looking_for = models.CharField(
         choices=LOOKING_FOR_CHOICES, max_length=6, default="BOTH"
     )
+    profile_picture = models.ImageField(upload_to=path_and_rename, null=True)
 
     def age(self):
-        return int((datetime.datetime.now() - self.date_of_birth).days / 365.25)
+        return int((datetime.datetime.now().date() - self.date_of_birth).days / 365.25)
 
     def zodiac(self):
         signs = [
-            (1, 20, "Cap"),
-            (2, 18, "Aqu"),
-            (3, 20, "Pis"),
-            (4, 20, "Ari"),
-            (5, 21, "Tau"),
-            (6, 21, "Gem"),
-            (7, 22, "Can"),
+            (1, 20, "Capricorn"),
+            (2, 18, "Aquarius"),
+            (3, 20, "Pisces"),
+            (4, 20, "Aries"),
+            (5, 21, "Taurus"),
+            (6, 21, "Gemini"),
+            (7, 22, "Cancer"),
             (8, 23, "Leo"),
-            (9, 23, "Vir"),
-            (10, 23, "Lib"),
-            (11, 22, "Sco"),
-            (12, 22, "Sag"),
-            (12, 31, "Cap"),
+            (9, 23, "Virgo"),
+            (10, 23, "Libra"),
+            (11, 22, "Scorpio"),
+            (12, 22, "Sagittarius"),
+            (12, 31, "Capricorn"),
         ]
-        month = self.date_of_birth.strftime("%m")
-        day = self.date_of_birth.strftime("%d")
+        month = int(self.date_of_birth.strftime("%m"))
+        day = int(self.date_of_birth.strftime("%d"))
         return signs[bisect(signs, (month, day))][2]
 
     def __str__(self):

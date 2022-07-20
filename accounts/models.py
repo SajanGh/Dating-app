@@ -2,7 +2,6 @@ from django.db import models
 import uuid
 from django.dispatch import receiver
 from allauth.account.signals import user_signed_up
-from django.shortcuts import redirect
 from user_profile.models import UserProfile
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 

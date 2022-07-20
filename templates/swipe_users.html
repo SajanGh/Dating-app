@@ -5,31 +5,17 @@
   </div>
 
   <div class="tinder--cards">
+    {% for user_profile in userprofile_list %}
     <div class="tinder--card">
-      <img src="https://placeimg.com/600/300/people">
-      <h3>Demo card 1</h3>
-      <p>This is a demo for Tinder like swipe cards</p>
-    </div>
-    <div class="tinder--card">
-      <img src="https://placeimg.com/600/300/animals">
-      <h3>Demo card 2</h3>
-      <p>This is a demo for Tinder like swipe cards</p>
-    </div>
-    <div class="tinder--card">
-      <img src="https://placeimg.com/600/300/nature">
-      <h3>Demo card 3</h3>
-      <p>This is a demo for Tinder like swipe cards</p>
-    </div>
-    <div class="tinder--card">
-      <img src="https://placeimg.com/600/300/tech">
-      <h3>Demo card 4</h3>
-      <p>This is a demo for Tinder like swipe cards</p>
-    </div>
-    <div class="tinder--card">
-      <img src="https://placeimg.com/600/300/arch">
-      <h3>Demo card 5</h3>
-      <p>This is a demo for Tinder like swipe cards</p>
-    </div>
+        <img src="{{user_profile.profile_picture.url}}">
+        <div class="info text-start mx-4">
+          <h2 class="fw-bolder mb-0">{{user_profile.first_name}} , {{user_profile.age}}</h2>
+          <p class="fw-light mt-0 mb-0">{{user_profile.zodiac}}</p>
+          <p class="fw-light mt-0 mb-0">Recently Active (2km away)</p>
+          <p class="fw-light">"{{user_profile.bio}}"</p>
+        </div>
+  </div>
+    {% endfor %}
   </div>
 
   <div class="tinder--buttons">

@@ -82,20 +82,24 @@ body{
 
 .tinder--card img {
   max-width: 100%;
+  opacity:0.9;
   pointer-events: none;
 }
 
-.tinder--card h3 {
-  margin-top: 32px;
+.tinder--card .info{
+  position: absolute;
+  pointer-events: none;
+  color: white;
+  top: 55%;
+}
+
+.tinder--card h2 {
   font-size: 32px;
-  padding: 0 16px;
   pointer-events: none;
 }
 
 .tinder--card p {
-  margin-top: 24px;
   font-size: 20px;
-  padding: 0 16px;
   pointer-events: none;
 }
 
