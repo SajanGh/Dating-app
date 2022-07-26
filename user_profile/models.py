@@ -1,9 +1,11 @@
 import datetime
+from operator import mod
 import os
 import uuid
 from bisect import bisect
 from django.conf import settings
 from django.db import models
+from django.dispatch import receiver
 
 User = settings.AUTH_USER_MODEL
 
@@ -12,13 +14,11 @@ User = settings.AUTH_USER_MODEL
 def path_and_rename(instance, filename):
     upload_to = "media/profile_images"
     ext = filename.split(".")[-1]
-    # get filename
+
     if instance.pk:
         filename = "{}.{}".format(instance.pk, ext)
     else:
-        # set filename as random string
         filename = "{}.{}".format(uuid.uuid4().hex, ext)
-    # return the whole path to the file
     return os.path.join(upload_to, filename)
 
 
@@ -74,3 +74,13 @@ class UserProfile(models.Model):
     def __str__(self):
         # return self.first_name + " " + self.last_name
         return self.user.email
+
+
+class Heart(models.Model):
+    sent_by = models.ForeignKey(
+        UserProfile, on_delete=models.CASCADE, related_name="heart_sender"
+    )
+    received_by = models.ForeignKey(
+        UserProfile, on_delete=models.CASCADE, related_name="heart_receiver"
+    )
+    created_on = models.DateTimeField(auto_now_add=True)
