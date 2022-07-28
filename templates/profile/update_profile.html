@@ -31,9 +31,6 @@ form .required .form-label:after {
                 <article class="card-body">
                     <form method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
-
-                        {{form.errors}}
-
                         <!-- <div>
                             {{ form|crispy }}
                         </div> -->
@@ -60,6 +57,9 @@ form .required .form-label:after {
                         <div class="mb-3 required">
                             <label for="examplePhone" class="form-label">Contact Number</label>
                             <input type="tel" name="phone" value="{{form.phone.value}}" class="form-control" id="examplePhone" required>
+                            <div class="valid-feedback">
+                                {{form.errors}}
+                            </div>
                         </div>
                         <div class="mb-3 required">
                             <label for="exampleGender" class="form-label" >Gender</label>
@@ -77,12 +77,10 @@ form .required .form-label:after {
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="mb-3 required">
+                        <div class="mb-3">
                             <div id="formFile">
                                 {{form.profile_picture | as_crispy_field}}
                             </div>
-                            <!-- <p>Currently : <a href="{{form.profile_picture.value.url}}">{{form.profile_picture.value}}</a></p>
-                            <input class="form-control" name="profile_picture" value={{form.profile_picture.value}} accept=".jpg, .png" type="file" id="formFile" required> -->
                         </div>
                         <div class="mb-3">
                             <button type="submit" class="btn btn-primary btn-lg"> Update </button>
