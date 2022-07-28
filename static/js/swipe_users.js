@@ -97,7 +97,7 @@ allCards.forEach(function (el) {
          "receiver":receiver
        },
        success:(data) => { 
-         console.log(data)
+        triggerAlert(data["message"], 'success');
        },
        error:(error) => {
          console.log(error)
@@ -133,7 +133,7 @@ function createButtonListener(love) {
           "receiver":receiver
         },
         success:(data) => { 
-          console.log(data)
+          triggerAlert(data["message"], 'success');
         },
         error:(error) => {
           console.log(error)
