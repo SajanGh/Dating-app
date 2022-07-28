@@ -8,6 +8,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from DatingAppProject.decorators import profile_update_required
 
+
 decorators = [login_required, profile_update_required]
 
 

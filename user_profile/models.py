@@ -2,10 +2,19 @@ import datetime
 from operator import mod
 import os
 import uuid
+
+import math
+from django.db.models.expressions import RawSQL
+from django.db.backends.signals import connection_created
+from django.dispatch import receiver
+
 from bisect import bisect
 from django.conf import settings
 from django.db import models
-from django.dispatch import receiver
+
+from common.constants import LOOKING_FOR_CHOICES, GENDER_CHOICES, signs
+from common.models import CommonInfo
+
 
 User = settings.AUTH_USER_MODEL
 
@@ -22,19 +31,39 @@ def path_and_rename(instance, filename):
     return os.path.join(upload_to, filename)
 
 
+@receiver(connection_created)
+def extend_sqlite(connection=None, **kwargs):
+    cf = connection.connection.create_function
+    cf("acos", 1, math.acos)
+    cf("cos", 1, math.cos)
+    cf("radians", 1, math.radians)
+    cf("sin", 1, math.sin)
+
+
+class LocationManager(models.Manager):
+
+    # Assistance from https://stackoverflow.com/questions/19703975/django-sort-by-distance
+    def nearby_locations(self, citylat, citylong, max_distance=None):
+        """
+        Return objects sorted by distance to specified coordinates
+        which distance is less than max_distance given in kilometers
+        """
+        gcd_formula = "6371 * acos(cos(radians(%s)) * \
+        cos(radians(citylat)) \
+        * cos(radians(citylong) - radians(%s)) + \
+        sin(radians(%s)) * sin(radians(citylat)))"
+        distance_raw_sql = RawSQL(gcd_formula, (citylat, citylong, citylat))
+
+        if max_distance is not None:
+            return self.annotate(distance=distance_raw_sql).filter(
+                distance__lt=max_distance
+            )
+        else:
+            return self.annotate(distance=distance_raw_sql)
+
+
 # Profile model for user-- contains personal information
-class UserProfile(models.Model):
-
-    GENDER_CHOICES = [("MALE", "Male"), ("FEMALE", "Female"), ("OTHER", "Other")]
-    LOOKING_FOR_CHOICES = [
-        ("MALE", "Male"),
-        ("FEMALE", "Female"),
-        ("BOTH", "Both"),
-    ]
-
-    id = models.UUIDField(
-        primary_key=True, default=uuid.uuid4, editable=False, db_index=True
-    )
+class UserProfile(CommonInfo):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
     first_name = models.CharField(max_length=50, null=True)
     last_name = models.CharField(max_length=50, null=True)
@@ -48,39 +77,25 @@ class UserProfile(models.Model):
     )
     profile_picture = models.ImageField(upload_to=path_and_rename, null=True)
 
+    lat = models.DecimalField(max_digits=9, decimal_places=6, null=True)
+    long = models.DecimalField(max_digits=9, decimal_places=6, null=True)
+
     def age(self):
         return int((datetime.datetime.now().date() - self.date_of_birth).days / 365.25)
 
     def zodiac(self):
-        signs = [
-            (1, 20, "Capricorn"),
-            (2, 18, "Aquarius"),
-            (3, 20, "Pisces"),
-            (4, 20, "Aries"),
-            (5, 21, "Taurus"),
-            (6, 21, "Gemini"),
-            (7, 22, "Cancer"),
-            (8, 23, "Leo"),
-            (9, 23, "Virgo"),
-            (10, 23, "Libra"),
-            (11, 22, "Scorpio"),
-            (12, 22, "Sagittarius"),
-            (12, 31, "Capricorn"),
-        ]
         month = int(self.date_of_birth.strftime("%m"))
         day = int(self.date_of_birth.strftime("%d"))
         return signs[bisect(signs, (month, day))][2]
 
     def __str__(self):
-        # return self.first_name + " " + self.last_name
         return self.user.email
 
 
-class Heart(models.Model):
+class Heart(CommonInfo):
     sent_by = models.ForeignKey(
         UserProfile, on_delete=models.CASCADE, related_name="heart_sender"
     )
     received_by = models.ForeignKey(
         UserProfile, on_delete=models.CASCADE, related_name="heart_receiver"
     )
-    created_on = models.DateTimeField(auto_now_add=True)

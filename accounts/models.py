@@ -1,9 +1,12 @@
 from django.db import models
 import uuid
 from django.dispatch import receiver
-from allauth.account.signals import user_signed_up
+from allauth.account.signals import user_signed_up, user_logged_in
 from user_profile.models import UserProfile
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.utils import timezone
+import requests
+import json
 
 
 class UserManager(BaseUserManager):
@@ -17,6 +20,7 @@ class UserManager(BaseUserManager):
 
         user = self.model(
             email=self.normalize_email(email),
+            last_login=timezone.now(),
         )
 
         user.set_password(password)
@@ -82,3 +86,14 @@ def create_user_profile_instance(user, sociallogin=None, **kwargs):
             user.profile.first_name = sociallogin.account.extra_data["given_name"]
             user.profile.last_name = sociallogin.account.extra_data["family_name"]
             user.profile.save()
+
+
+@receiver(user_logged_in)
+def updateLocation(user, **kwargs):
+    ip = requests.get("https://api.ipify.org?format=json")
+    ip_data = json.loads(ip.text)
+    res = requests.get("http://ip-api.com/json/" + ip_data.get("ip"))
+    location_data = json.loads(res.text)
+    user.profile.long = location_data.get("lon")
+    user.profile.lat = location_data.get("lat")
+    user.profile.save()
