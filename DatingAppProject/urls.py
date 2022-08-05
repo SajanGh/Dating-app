@@ -17,11 +17,16 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, include
+import notifications.urls
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("allauth.urls")),
+    path(
+        "inbox/notifications/", include(notifications.urls, namespace="notifications")
+    ),
     path("", include("user_profile.urls")),
+    path("filter/", include("find_users.urls")),
 ]
 
 if settings.DEBUG:

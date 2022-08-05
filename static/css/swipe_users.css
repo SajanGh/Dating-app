@@ -1,5 +1,5 @@
 body{
-  background-color: aqua;
+  background-color:#52B9A8;
 }
 .tinder {
   width: 100%;
@@ -134,4 +134,8 @@ body{
 
 .fa-remove {
   color: #CDD6DD;
+}
+
+.fa-heart:hover, .fa-remove:hover {
+  color: #ff726f;
 }

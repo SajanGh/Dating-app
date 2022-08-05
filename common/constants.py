@@ -25,3 +25,71 @@ signs = [
     (12, 22, "Sagittarius"),
     (12, 31, "Capricorn"),
 ]
+
+
+NOTIFICATION_STATUS_CHOICES = [
+    ("Seen", "Seen"),
+    ("Unseen", "Unseen"),
+]
+
+EYE_COLOR = (
+    ("BLACK", "Black"),
+    ("BROWN", "Brown"),
+    ("BLUE", "Blue"),
+    ("GREEN", "Green"),
+    ("HAZEL", "Hazel"),
+    ("OTHER", "Other"),
+)
+HAIR_COLOUR = (
+    ("BLACK", "Black"),
+    ("BLONDE", "Blonde"),
+    ("BROWN", "Brown"),
+    ("RED", "Red"),
+    ("GREY", "Grey"),
+    ("BALD", "Bald"),
+    ("BLUE", "Blue"),
+    ("PINK", "Pink"),
+    ("GREEN", "Green"),
+    ("PURPLE", "Purple"),
+    ("OTHER", "Other"),
+)
+HEIGHT = (
+    ("BELOW 4", "Below 4"),
+    ("4 to 5", "4 to 5"),
+    ("5 to 6", "5 to 6"),
+    ("ABOVE 6", "Above 6"),
+)
+HAIR_LENGTH = (
+    ("LONG", "Long"),
+    ("SHOULDER LENGTH", "Shoulder Length"),
+    ("AVERAGE", "Average"),
+    ("SHORT", "Short"),
+    ("SHAVED", "Shaved"),
+)
+BODY_TYPE = (
+    ("THIN", "Thin"),
+    ("AVERAGE", "Average"),
+    ("FIT", "Fit"),
+    ("MUSCULAR", "Muscular"),
+    ("A LITTLE EXTRA", "A Little Extra"),
+    ("CURVY", "Curvy"),
+)
+RELIGION = (
+    ("HINDU", "Hindu"),
+    ("CHRISTIAN", "Christian"),
+    ("MUSLIM", "Muslim"),
+    ("BUDDHIST", "Buddhist"),
+    ("OTHER", "Other"),
+)
+RELATIONSHIP_STATUS = (
+    ("SINGLE", "Single"),
+    ("WIDOWED", "Widowed"),
+    ("SEPARATED", "Separated"),
+)
+EDUCATION = (
+    ("HIGH SCHOOL", "High School"),
+    ("COLLEGE", "College"),
+    ("BACHELORS DEGREE", "Bachelors Degree"),
+    ("MASTERS", "Masters"),
+    ("PHD / POST DOCTORAL", "PhD / Post Doctoral"),
+)

@@ -1,0 +1,254 @@
+{%extends 'base.html'%} 
+{% load static %} 
+{% load custom_tags %}
+
+{% block css %}
+
+<link rel="stylesheet" href="{% static 'css/filter_users.css' %}">
+<!-- <link rel="stylesheet" href="https://dating-app-mvd.s3.amazonaws.com/static/css/style.css" type="text/css"> -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+
+{% endblock %}
+
+{% block content %}
+<!--Send message modal-->
+<div class="modal fade" id="message-modal" tabindex="-1" role="dialog" aria-labelledby="message-modal-title" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="card-container">
+                <div class="card-form card">
+                    <button type="button" class="close modal-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <div class="card-form-container">
+                        <h3 class="card-modal-title">Send Message</h3>
+                        <hr>
+                        <p class="card-form-subtitle">Start a conversation</p>
+                        <form class="standard-form not-profile-page-message-form" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="csrfmiddlewaretoken" value="{% csrf_token %}">
+                            <input id="message-receiver-id" type="hidden" value="">
+                            <textarea cols="40" maxlength="500" rows="10" required="" id="message-input"></textarea>
+                            <input type="submit" class="submit-success" name="message_submit" />
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Search options-->
+<form class="search-form" method="GET">
+    <div class="search-option-container">
+        <button type="button" class="search-reset-button" onclick="remove_selected()">RESET</button> 
+        <div class="dropdown bootstrap-select show-tick">
+            <select name="hair_colour" title="" id="id_hair_colour" multiple="multiple" data-container="body" class="" tabindex="-98">
+                <option value="BLACK">Black</option>
+
+                <option value="BLONDE">Blonde</option>
+
+                <option value="BROWN">Brown</option>
+
+                <option value="RED">Red</option>
+
+                <option value="GREY">Grey</option>
+
+                <option value="BALD">Bald</option>
+
+                <option value="BLUE">Blue</option>
+
+                <option value="PINK">Pink</option>
+
+                <option value="GREEN">Green</option>
+
+                <option value="PURPLE">Purple</option>
+
+                <option value="OTHER">Other</option>
+            </select>
+            <button type="button" class="btn dropdown-toggle btn-light selected-search-option" data-toggle="dropdown" role="button" data-id="id_hair_colour" title="Black" aria-expanded="false">
+                <div class="filter-option">
+                    <div class="filter-option-inner">
+                        <div class="filter-option-inner-inner">Black</div>
+                    </div> 
+                </div>
+            </button>
+        </div>
+<div class="dropdown bootstrap-select show-tick"><select name="body_type" title="" id="id_body_type" multiple="multiple" data-container="body" class="" tabindex="-98">
+  <option value="THIN">Thin</option>
+
+  <option value="AVERAGE">Average</option>
+
+  <option value="FIT">Fit</option>
+
+  <option value="MUSCULAR">Muscular</option>
+
+  <option value="A LITTLE EXTRA">A Little Extra</option>
+
+  <option value="CURVY">Curvy</option>
+
+</select><button type="button" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="button" data-id="id_body_type" title="Body Type ▾"><div class="filter-option"><div class="filter-option-inner"><div class="filter-option-inner-inner">Body Type ▾</div></div> </div></button><div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1"><ul class="dropdown-menu inner show"></ul></div></div></div>
+<div class="dropdown bootstrap-select show-tick"><select name="hair_length" title="" id="id_hair_length" multiple="multiple" data-container="body" class="" tabindex="-98">
+  <option value="LONG">Long</option>
+
+  <option value="SHOULDER LENGTH">Shoulder Length</option>
+
+  <option value="AVERAGE">Average</option>
+
+  <option value="SHORT">Short</option>
+
+  <option value="SHAVED">Shaved</option>
+
+</select><button type="button" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="button" data-id="id_hair_length" title="Hair Lenght ▾"><div class="filter-option"><div class="filter-option-inner"><div class="filter-option-inner-inner">Hair Lenght ▾</div></div> </div></button><div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1"><ul class="dropdown-menu inner show"></ul></div></div></div>
+<div class="dropdown bootstrap-select show-tick"><select name="ethnicity" title="" id="id_ethnicity" multiple="multiple" data-container="body" class="" tabindex="-98">
+  <option value="WHITE">White</option>
+
+  <option value="ASIAN: INDIAN">Asian: Indian</option>
+
+  <option value="ASIAN: PAKISTANI">Asian: Pakistani</option>
+
+  <option value="ASIAN: BANGLADESHI">Asian: Bangladeshi</option>
+
+  <option value="ASIAN: CHINESE">Asian: Chinese</option>
+
+  <option value="BLACK">Black</option>
+
+  <option value="MIXED">Mixed</option>
+
+  <option value="OTHER ETHNICITY">Other Ethnicity</option>
+
+</select><button type="button" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="button" data-id="id_ethnicity" title="Ethnicity ▾"><div class="filter-option"><div class="filter-option-inner"><div class="filter-option-inner-inner">Ethnicity ▾</div></div> </div></button><div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1"><ul class="dropdown-menu inner show"></ul></div></div></div>
+<div class="dropdown bootstrap-select show-tick"><select name="relationship_status" title="" id="id_relationship_status" multiple="multiple" data-container="body" class="" tabindex="-98">
+  <option value="NEVER MARRIED">Never Married</option>
+
+  <option value="DIVORCED">Divorced</option>
+
+  <option value="WIDOWED">Widowed</option>
+
+  <option value="SEPARATED">Separated</option>
+
+</select><button type="button" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="button" data-id="id_relationship_status" title="Relationship Status ▾"><div class="filter-option"><div class="filter-option-inner"><div class="filter-option-inner-inner">Relationship Status ▾</div></div> </div></button><div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1"><ul class="dropdown-menu inner show"></ul></div></div></div>
+<div class="dropdown bootstrap-select show-tick"><select name="gender" title="" id="id_gender" multiple="multiple" data-container="body" class="" tabindex="-98">
+  <option value="MALE">Male</option>
+
+  <option value="FEMALE">Female</option>
+
+</select><button type="button" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="button" data-id="id_gender" title="Gender ▾"><div class="filter-option"><div class="filter-option-inner"><div class="filter-option-inner-inner">Gender ▾</div></div> </div></button><div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1"><ul class="dropdown-menu inner show"></ul></div></div></div>
+
+
+        <div class="dropdown bootstrap-select show-tick custom-form-field"><select class="custom-form-field" title="" id="sexuality" data-container="body" multiple="" name="sexuality" tabindex="-98">
+                <option value="s">Straight</option>
+                <option value="b">Bisexual</option>
+                <option value="g">Gay</option>
+            </select><button type="button" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="button" data-id="sexuality" title="Sexuality ▾"><div class="filter-option"><div class="filter-option-inner"><div class="filter-option-inner-inner">Sexuality ▾</div></div> </div></button><div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1"><ul class="dropdown-menu inner show"></ul></div></div></div>
+        <div class="dropdown bootstrap-select custom-form-field"><select title="" name="distance" class="custom-form-field" id="distance" data-container="body" tabindex="-98"><option class="bs-title-option" value=""></option>
+            <option value="10">10km</option>
+            <option value="25">25km</option>
+            <option value="50">50km</option>
+            <option value="100">100km</option>
+            <option value="250">250km</option>
+            <option value="500">500km</option>
+            <option value="750">750km</option>
+            <option value="worldwide">Worldwide</option>
+        </select><button type="button" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="button" data-id="distance" title="Distance ▾"><div class="filter-option"><div class="filter-option-inner"><div class="filter-option-inner-inner">Distance ▾</div></div> </div></button><div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1"><ul class="dropdown-menu inner show"></ul></div></div></div>
+        <div class="dropdown bootstrap-select custom-form-field"><select data-min-height="0" class="custom-form-field" title="" id="height_min" data-container="body" name="height_min" tabindex="-98"><option class="bs-title-option" value=""></option>
+                <option value="152.4">5' 0"</option>
+                <option value="154.94">5' 1"</option>
+                <option value="157.48">5' 2"</option>
+                <option value="160.02">5' 3"</option>
+                <option value="162.56">5' 4"</option>
+                <option value="165.1">5' 5"</option>
+                <option value="167.64">5' 6"</option>
+                <option value="170.18">5' 7"</option>
+                <option value="172.72">5' 8"</option>
+                <option value="175.26">5' 9"</option>
+                <option value="177.8">5' 10"</option>
+                <option value="180.34">5' 11"</option>
+                <option value="182.88">6' 0"</option>
+                <option value="185.42">6' 1"</option>
+                <option value="187.96">6' 2"</option>
+                <option value="190.5">6' 3"</option>
+                <option value="193.04">6' 4"</option>
+                <option value="195.58">6' 5"</option>
+                <option value="198.12">6' 6"</option>
+                <option value="200.66">6' 7"</option>
+                <option value="203.2">6' 8"</option>
+                <option value="205.74">6' 9"</option>
+                <option value="208.28">6' 10"</option>
+                <option value="210.82">6' 11"</option>
+            </select><button type="button" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="button" data-id="height_min" title="Min Height ▾"><div class="filter-option"><div class="filter-option-inner"><div class="filter-option-inner-inner">Min Height ▾</div></div> </div></button><div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1"><ul class="dropdown-menu inner show"></ul></div></div></div>
+
+        <div class="dropdown bootstrap-select custom-form-field"><select data-max-height="200" class="custom-form-field" title="" id="height_max" name="height_max" data-container="body" tabindex="-98"><option class="bs-title-option" value=""></option>
+                <option value="152.4">5' 0"</option>
+                <option value="154.94">5' 1"</option>
+                <option value="157.48">5' 2"</option>
+                <option value="160.02">5' 3"</option>
+                <option value="162.56">5' 4"</option>
+                <option value="165.1">5' 5"</option>
+                <option value="167.64">5' 6"</option>
+                <option value="170.18">5' 7"</option>
+                <option value="172.72">5' 8"</option>
+                <option value="175.26">5' 9"</option>
+                <option value="177.8">5' 10"</option>
+                <option value="180.34">5' 11"</option>
+                <option value="182.88">6' 0"</option>
+                <option value="185.42">6' 1"</option>
+                <option value="187.96">6' 2"</option>
+                <option value="190.5">6' 3"</option>
+                <option value="193.04">6' 4"</option>
+                <option value="195.58">6' 5"</option>
+                <option value="198.12">6' 6"</option>
+                <option value="200.66">6' 7"</option>
+                <option value="203.2">6' 8"</option>
+                <option value="205.74">6' 9"</option>
+                <option value="208.28">6' 10"</option>
+                <option value="210.82">6' 11"</option>
+            </select><button type="button" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="button" data-id="height_max" title="Max Height ▾"><div class="filter-option"><div class="filter-option-inner"><div class="filter-option-inner-inner">Max Height ▾</div></div> </div></button><div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1"><ul class="dropdown-menu inner show"></ul></div></div></div>
+    </div>
+    <button class="search-button" type="submit"><i class="fas fa-search"></i></button>
+</form>
+<!--Filtered profiles-->
+<div class="container-fluid">
+    <div class="row">
+        {% if not userprofile_list %}
+        <p class="centered-text">No profiles match your search. Try adjusting your filters</p>
+        {% endif %} 
+        {% for user_profile in userprofile_list %}
+        <div class="card-container col-sm-12 col-md-6 col-lg-3">
+            <div class="card four-cards">
+                <a class="card-link card-link-wrapper" href="{% url 'profile_detail' user_profile.id %}">
+                    <div class="card-img four-cards" style="background-image: url({{user_profile.profile_picture.url}})" ></div>
+                    <div class="row username-container">
+                        <p class="col-9 card-username">{{user_profile.first_name}} {{user_profile.last_name}}</p>
+                        <p class="col-3 card-age">{{user_profile.age}}</p>
+                    </div>
+                    <p class="card-distance">{% calculate_distance request.user.id user_profile.id %} KM Away</p>
+                    <div class="row interaction-container">
+                        <div class="interaction-wrapper">
+                            <i class="hidden-icon col-6 far fa-comment-alt grid-message"></i>
+                        </div>
+                </a>
+                <a class="card-link card-link-left" data-username="{{profile.user.username}}" data-user-id="{{profile.user.id}}"><i class="col-6 far fa-comment-alt grid-message"></i></a>
+                <a class="card-link card-link-right" onclick="send_wink_grid_link({{user_profile.id}})"><i class="col-6 far fa-smile-wink grid-wink"></i></a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+</div>
+<!--Pagination-->
+<div class="pagination-links">
+    {% if search_page %} {% for search in search_page %} {% endfor %} {% if search_page.has_previous %}
+    <a href="?page={{ search_page.previous_page_number }}">Previous</a>
+            {% endif %}
+
+            <span data-page={{page}} class="current">
+    Page {{ search_page.number }} of {{ search_page.paginator.num_pages }}
+    </span> {% if search_page.has_next %}
+            <a href="?page={{ search_page.next_page_number }}">Next ></a> {% endif %} {% endif %}
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+
+<script src="{% static 'js/filter_users.js' %}" ></script>
+
+{% endblock %}

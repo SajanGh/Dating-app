@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load custom_tags %}
+{% load static %}
+
+
+{% block css %}
+
+<link rel="stylesheet" href="{% static 'css/user_profile.css' %}">
+
+{% endblock %}
+
+{% block content %}
+
+<main class="profile mx-auto mt-5">
+    <div class="profile-bg"></div>
+    {% if object.user == request.user  %}
+    <a href="{% url 'update_profile' user.profile.id %}" class=" d-flex justify-content-end"><i class="fa-solid fa-pen-to-square fs-4 text-dark"></i></a>
+    {% endif %}
+    <section class="container">
+        <img src="{{object.profile_picture.url}}" class="profile-image" >
+        <section class="profile-info">
+        <h1 class="first-name">{{object.first_name}} {{object.last_name}}</h1>
+        <h2>{{object.age}}</h2>
+        <h2>{{object.zodiac}}</h2>
+        <h2>{% calculate_distance request.user.id object.id %} KM Away</h2>
+        <h2 class="bio mt-5">BIO</h2>
+        <p>
+            {{object.bio}}
+        </p>
+        <h2 class="bio mt-3">INTERESTS</h2>
+        <p>
+            
+        </p>
+    
+        </section>
+    </section>
+    <section class="statistics">
+        <p><strong>{{hearts_received.count}}</strong> Hearts Received</p>
+        {% if object.user == request.user  %}
+        <p><strong>{{hearts_sent.count}}</strong> Hearts Sent</p>
+        {% endif %}
+    </section>
+</main>
+{% if object.user != request.user  %}
+<div class="container-fluid d-flex justify-content-center align-items-center tinder--buttons mt-5">
+    <button id="nope"><i class="fa fa-remove"></i></button>
+    <button id="love"><i class="fa fa-heart"></i></button>
+</div>
+{% endif %}
+
+
+
+
+{% endblock %}

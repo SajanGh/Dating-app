@@ -12,7 +12,20 @@ from bisect import bisect
 from django.conf import settings
 from django.db import models
 
-from common.constants import LOOKING_FOR_CHOICES, GENDER_CHOICES, signs
+from common.constants import (
+    HEIGHT,
+    LOOKING_FOR_CHOICES,
+    GENDER_CHOICES,
+    signs,
+    HAIR_COLOUR,
+    HAIR_LENGTH,
+    BODY_TYPE,
+    RELIGION,
+    RELATIONSHIP_STATUS,
+    EDUCATION,
+    EYE_COLOR,
+    HEIGHT,
+)
 from common.models import CommonInfo
 
 
@@ -72,9 +85,7 @@ class UserProfile(CommonInfo):
     address = models.CharField(max_length=100, null=True)
     phone = models.CharField(max_length=10, null=True)
     gender = models.CharField(choices=GENDER_CHOICES, max_length=6, default="MALE")
-    looking_for = models.CharField(
-        choices=LOOKING_FOR_CHOICES, max_length=6, default="BOTH"
-    )
+
     profile_picture = models.ImageField(upload_to=path_and_rename, null=True)
 
     lat = models.DecimalField(max_digits=9, decimal_places=6, null=True)
@@ -90,6 +101,36 @@ class UserProfile(CommonInfo):
 
     def __str__(self):
         return self.user.email
+
+
+class UserDescription(CommonInfo):
+    user = models.OneToOneField(
+        UserProfile, on_delete=models.CASCADE, related_name="description"
+    )
+    height = models.CharField(choices=HEIGHT, default="4 to 5", max_length=10)
+    eye_color = models.CharField(choices=EYE_COLOR, max_length=10, default="BLACK")
+    hair_length = models.CharField(
+        choices=HAIR_LENGTH, default="LONG", blank=False, max_length=100
+    )
+    hair_colour = models.CharField(
+        choices=HAIR_COLOUR, default="BLACK", blank=False, max_length=10
+    )
+    body_type = models.CharField(
+        choices=BODY_TYPE, default="AVERAGE", blank=False, max_length=15
+    )
+    religion = models.CharField(
+        choices=RELIGION, default="HINDU", blank=False, max_length=100
+    )
+    relationship_status = models.CharField(
+        choices=RELATIONSHIP_STATUS, default="SINGLE", blank=False, max_length=100
+    )
+    education = models.CharField(
+        choices=EDUCATION, default="HIGH SCHOOL", blank=False, max_length=100
+    )
+    looking_for = models.CharField(
+        choices=LOOKING_FOR_CHOICES, max_length=6, default="BOTH"
+    )
+    is_completed = models.BooleanField(default=False)
 
 
 class Heart(CommonInfo):

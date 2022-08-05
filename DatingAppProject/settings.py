@@ -46,6 +46,7 @@ INSTALLED_APPS = [
 MY_APPS = [
     "accounts.apps.AccountsConfig",
     "user_profile.apps.UserProfileConfig",
+    "find_users.apps.FindUsersConfig",
 ]
 
 THIRD_PARTY_APPS = [
@@ -59,6 +60,8 @@ THIRD_PARTY_APPS = [
     "crispy_bootstrap5",
     # for cleaning old files and images after update
     "django_cleanup",
+    # for notification system
+    "notifications",
 ]
 
 INSTALLED_APPS += MY_APPS + THIRD_PARTY_APPS
