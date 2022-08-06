@@ -11,36 +11,12 @@
 {% endblock %}
 
 {% block content %}
-<!--Send message modal-->
-<div class="modal fade" id="message-modal" tabindex="-1" role="dialog" aria-labelledby="message-modal-title" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="card-container">
-                <div class="card-form card">
-                    <button type="button" class="close modal-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                    <div class="card-form-container">
-                        <h3 class="card-modal-title">Send Message</h3>
-                        <hr>
-                        <p class="card-form-subtitle">Start a conversation</p>
-                        <form class="standard-form not-profile-page-message-form" method="POST">
-                            {% csrf_token %}
-                            <input type="hidden" name="csrfmiddlewaretoken" value="{% csrf_token %}">
-                            <input id="message-receiver-id" type="hidden" value="">
-                            <textarea cols="40" maxlength="500" rows="10" required="" id="message-input"></textarea>
-                            <input type="submit" class="submit-success" name="message_submit" />
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 <!--Search options-->
-<form class="search-form" method="GET">
+<!-- <form class="search-form" method="GET">
     <div class="search-option-container">
         <button type="button" class="search-reset-button" onclick="remove_selected()">RESET</button> 
         <div class="dropdown bootstrap-select show-tick">
-            <select name="hair_colour" title="" id="id_hair_colour" multiple="multiple" data-container="body" class="" tabindex="-98">
+            <select name="hair_colour" title="{{x}}" id="id_hair_colour" multiple="multiple" data-container="body" class="" tabindex="-98">
                 <option value="BLACK">Black</option>
 
                 <option value="BLONDE">Blonde</option>
@@ -203,14 +179,88 @@
             </select><button type="button" class="btn dropdown-toggle btn-light bs-placeholder" data-toggle="dropdown" role="button" data-id="height_max" title="Max Height ▾"><div class="filter-option"><div class="filter-option-inner"><div class="filter-option-inner-inner">Max Height ▾</div></div> </div></button><div class="dropdown-menu " role="combobox"><div class="inner show" role="listbox" aria-expanded="false" tabindex="-1"><ul class="dropdown-menu inner show"></ul></div></div></div>
     </div>
     <button class="search-button" type="submit"><i class="fas fa-search"></i></button>
-</form>
+</form> -->
+
+<div class="container-fluid my-5">
+    <form method="get" class="d-flex">
+        <!-- <button class="btn btn-primary mx-2" type="button">Clear</button> -->
+        <select class="form-select" aria-label="Default select example" id="gender" name="gender">
+            <option selected>Select Gender</option>
+            {% for x,y in filter.form.fields.gender.choices %}
+                <option value="{{x}}">{{y}}</option>
+            {% endfor %}
+        </select>
+        <select class="form-select" aria-label="Default select example" id="age" name="age">
+            <option selected>Select Age</option>
+            {% for x,y in filter.form.fields.age.choices %}
+                <option value="{{x}}">{{y}}</option>
+            {% endfor %}
+        </select>
+        <select class="form-select" aria-label="Default select example" id="age" name="zodiac">
+            <option selected>Select Zodiac</option>
+            {% for x,y in filter.form.fields.zodiac.choices %}
+                <option value="{{x}}">{{y}}</option>
+            {% endfor %}
+        </select>
+        <select class="form-select" aria-label="Default select example" id ="height" name="height">
+            <option selected>Select Height</option>
+            {% for x,y in filter.form.fields.description__height.choices %}
+                <option value="{{x}}">{{y}}</option>
+            {% endfor %}
+        </select>
+        <select class="form-select" aria-label="Default select example" id="eyeColor" name="eye_color">
+            <option selected>Select Eye Color</option>
+            {% for x,y in filter.form.fields.description__eye_color.choices %}
+                <option value="{{x}}">{{y}}</option>
+            {% endfor %}
+        </select>
+        <select class="form-select" aria-label="Default select example" id="hairColor" name="hair_colour">
+            <option selected>Select Hair Color</option>
+            {% for x,y in filter.form.fields.description__hair_colour.choices %}
+                <option value="{{x}}">{{y}}</option>
+            {% endfor %}
+        </select>
+        <select class="form-select" aria-label="Default select example" id="hairLength" name="hair_length">
+            <option selected>Select Hair Length</option>
+            {% for x,y in filter.form.fields.description__hair_length.choices %}
+                <option value="{{x}}">{{y}}</option>
+            {% endfor %}
+        </select>
+        <select class="form-select" aria-label="Default select example" id="bodyType" name="body_type">
+            <option selected>Select Body Type</option>
+            {% for x,y in filter.form.fields.description__body_type.choices %}
+                <option value="{{x}}">{{y}}</option>
+            {% endfor %}
+        </select>
+        <select class="form-select" aria-label="Default select example" id="religion" name="religion">
+            <option selected>Select Religion</option>
+            {% for x,y in filter.form.fields.description__religion.choices %}
+                <option value="{{x}}">{{y}}</option>
+            {% endfor %}
+        </select>
+        <select class="form-select" aria-label="Default select example" id="relationshipStatus" name="relationship_status">
+            <option selected>Select Relationship Status</option>
+            {% for x,y in filter.form.fields.description__relationship_status.choices %}
+                <option value="{{x}}">{{y}}</option>
+            {% endfor %}
+        </select>
+        <select class="form-select" aria-label="Default select example" id="education" name="education">
+            <option selected>Select Education</option>
+            {% for x,y in filter.form.fields.description__education.choices %}
+                <option value="{{x}}">{{y}}</option>
+            {% endfor %}
+        </select>
+        <button class="btn btn-primary mx-2" type="submit">Find</button>
+    </form>
+</div>
+
 <!--Filtered profiles-->
 <div class="container-fluid">
     <div class="row">
-        {% if not userprofile_list %}
-        <p class="centered-text">No profiles match your search. Try adjusting your filters</p>
+        {% if not filter.qs %}
+        <p class="centered-text">No match found. Try adjusting your filters.</p>
         {% endif %} 
-        {% for user_profile in userprofile_list %}
+        {% for user_profile in filter.qs %}
         <div class="card-container col-sm-12 col-md-6 col-lg-3">
             <div class="card four-cards">
                 <a class="card-link card-link-wrapper" href="{% url 'profile_detail' user_profile.id %}">

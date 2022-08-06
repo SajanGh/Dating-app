@@ -1,5 +1,5 @@
 {% for notification in notifications %}
-            <div class="notification-list {% if notification.unread %} notification-list--unread {% endif %}"  data-slug="{{notification.slug}}" onclick="markAsRead()">
+            <div class="notification-list {% if notification.unread %} notification-list--unread{% endif %}"  data-slug="{{notification.slug}}" onclick="markAsRead()">
                 <a href="{% url 'profile_detail' notification.actor.profile.id %}" class="text-decoration-none">
                     <div class="notification-list_content">
                         <div class="notification-list_img">

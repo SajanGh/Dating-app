@@ -55,6 +55,7 @@ body {
 
 .notification-list--unread {
     border-left: 2px solid #29B6F6;
+    background-color: #D8D8D8;
 }
 
 .notification-list .notification-list_content {

@@ -83,6 +83,7 @@ RELIGION = (
 )
 RELATIONSHIP_STATUS = (
     ("SINGLE", "Single"),
+    ("MARRIED", "Married"),
     ("WIDOWED", "Widowed"),
     ("SEPARATED", "Separated"),
 )
@@ -93,3 +94,18 @@ EDUCATION = (
     ("MASTERS", "Masters"),
     ("PHD / POST DOCTORAL", "PhD / Post Doctoral"),
 )
+
+ZODIAC_CHOICES = [
+    ("Aquarius", "Aquarius"),
+    ("Pisces", "Pisces"),
+    ("Aries", "Aries"),
+    ("Taurus", "Taurus"),
+    ("Gemini", "Gemini"),
+    ("Cancer", "Cancer"),
+    ("Leo", "Leo"),
+    ("Virgo", "Virgo"),
+    ("Libra", "Libra"),
+    ("Scorpio", "Scorpio"),
+    ("Sagittarius", "Sagittarius"),
+    ("Capricorn", "Capricorn"),
+]

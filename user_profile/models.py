@@ -1,5 +1,4 @@
 import datetime
-from operator import mod
 import os
 import uuid
 
@@ -17,6 +16,7 @@ from common.constants import (
     LOOKING_FOR_CHOICES,
     GENDER_CHOICES,
     signs,
+    ZODIAC_CHOICES,
     HAIR_COLOUR,
     HAIR_LENGTH,
     BODY_TYPE,
@@ -90,11 +90,18 @@ class UserProfile(CommonInfo):
 
     lat = models.DecimalField(max_digits=9, decimal_places=6, null=True)
     long = models.DecimalField(max_digits=9, decimal_places=6, null=True)
+    age = models.IntegerField(null=True, blank=True)
+    zodiac = models.CharField(choices=ZODIAC_CHOICES, max_length=15, default=None)
 
-    def age(self):
+    def save(self, *args, **kwargs):
+        self.age = self.get_age()
+        self.zodiac = self.get_zodiac()
+        super(UserProfile, self).save(*args, **kwargs)
+
+    def get_age(self):
         return int((datetime.datetime.now().date() - self.date_of_birth).days / 365.25)
 
-    def zodiac(self):
+    def get_zodiac(self):
         month = int(self.date_of_birth.strftime("%m"))
         day = int(self.date_of_birth.strftime("%d"))
         return signs[bisect(signs, (month, day))][2]

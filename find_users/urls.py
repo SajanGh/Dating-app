@@ -3,5 +3,5 @@ from find_users.views import FilterUser
 
 
 urlpatterns = [
-    path("users/", FilterUser.as_view(), name="filter_user"),
+    path("users/", FilterUser, name="filter_user"),
 ]
