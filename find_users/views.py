@@ -1,21 +1,19 @@
+import imp
 from django.shortcuts import render
-from user_profile.models import UserDescription, UserProfile
+from django.http import HttpResponseBadRequest
+from user_profile.models import UserProfile
 from find_users.filters import UserFilter
 
 
-# class FilterUser(ListView):
-#     model = UserProfile
-#     template_name = "filter_users.html"
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context["form1"] = UserDescriptionForm()
-#         context["form2"] = UserFilterForm()
-#         return context
-
-
 def FilterUser(request):
-    print(request.GET.get("zodiac"))
-    f = UserFilter(request.GET, queryset=UserProfile.objects.all())
-    print(f.qs)
-    return render(request, "filter_users.html", {"filter": f})
+    is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
+
+    if is_ajax:
+        if request.method == "POST":
+            f = UserFilter(request.POST, queryset=UserProfile.objects.all())
+            return render(request, "filter_users_list.html", {"filter": f})
+        else:
+            return HttpResponseBadRequest("Invalid Request", status=400)
+    else:
+        f = UserFilter(request.GET, queryset=UserProfile.objects.all())
+        return render(request, "filter_users.html", {"filter": f})

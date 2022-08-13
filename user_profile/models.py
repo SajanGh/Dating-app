@@ -91,7 +91,9 @@ class UserProfile(CommonInfo):
     lat = models.DecimalField(max_digits=9, decimal_places=6, null=True)
     long = models.DecimalField(max_digits=9, decimal_places=6, null=True)
     age = models.IntegerField(null=True, blank=True)
-    zodiac = models.CharField(choices=ZODIAC_CHOICES, max_length=15, default=None)
+    zodiac = models.CharField(
+        choices=ZODIAC_CHOICES, max_length=15, null=True, blank=True
+    )
 
     def save(self, *args, **kwargs):
         self.age = self.get_age()
@@ -138,6 +140,13 @@ class UserDescription(CommonInfo):
         choices=LOOKING_FOR_CHOICES, max_length=6, default="BOTH"
     )
     is_completed = models.BooleanField(default=False)
+
+
+class UserInterest(CommonInfo):
+    user = models.ForeignKey(
+        UserProfile, on_delete=models.CASCADE, related_name="interest"
+    )
+    title = models.CharField(max_length=20, blank=True, null=True)
 
 
 class Heart(CommonInfo):

@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.urls import reverse_lazy
-from django.views.generic import UpdateView, ListView, DetailView
-from user_profile.models import UserProfile, Heart
+from django.views.generic import UpdateView, ListView, DetailView, CreateView
+from user_profile.models import UserDescription, UserProfile, Heart, UserInterest
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from DatingAppProject.decorators import profile_update_required
@@ -34,14 +34,6 @@ class UpdateProfile(UpdateView):
         "address",
         "phone",
         "gender",
-        # "eye_color",
-        # "hair_length",
-        # "hair_colour",
-        # "body_type",
-        # "religion",
-        # "relationship_status",
-        # "education",
-        # "looking_for",
         "profile_picture",
     ]
 
@@ -101,4 +93,38 @@ class UserDetailView(DetailView):
             received_by=self.kwargs.get("pk")
         )
         context["hearts_sent"] = Heart.objects.filter(sent_by=self.kwargs.get("pk"))
+        context["interests"] = UserInterest.objects.filter(user=self.kwargs.get("pk"))
         return context
+
+
+class AddUserInterest(CreateView):
+    model = UserInterest
+    fields = ["title"]
+    template_name = "profile/user_detail.html"
+
+    def get_success_url(self):
+        pk = self.request.user.profile.id
+        return reverse_lazy("profile_detail", kwargs={"pk": pk})
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user.profile
+        return super().form_valid(form)
+
+
+class UpdateUserDescription(UpdateView):
+    model = UserDescription
+    fields = [
+        "height",
+        "eye_color",
+        "hair_length",
+        "hair_colour",
+        "body_type",
+        "religion",
+        "relationship_status",
+        "education",
+    ]
+    template_name = "profile/update_user_description.html"
+
+    def get_success_url(self):
+        pk = self.request.user.profile.id
+        return reverse_lazy("profile_detail", kwargs={"pk": pk})

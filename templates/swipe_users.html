@@ -1,6 +1,30 @@
 {% load custom_tags %}
 
-<div class="tinder">
+{% block css %}
+
+<style>
+
+.swipe--info--left,.swipe--info--right{
+  position: absolute;
+}
+
+.swipe--info--left{
+  top:50%;
+  left:10%;
+}
+
+.swipe--info--right{
+  top:50%;
+  left:66%;
+}
+
+</style>
+
+{% endblock %}
+
+<div class="tinder bg">
+  <p class="swipe--info--left fs-1 text-light text-uppercase"><i class="fa-solid fa-left-long"></i> Swipe left to reject</p>
+  <p class="swipe--info--right fs-1 text-light text-uppercase">Swipe right to send heart <i class="fa-solid fa-right-long"></i></p>
   <div class="tinder--status">
     <i class="fa fa-remove"></i>
     <i class="fa fa-heart"></i>
@@ -28,5 +52,5 @@
 </div>
 
 {% block javascripts %}
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 {% endblock %}

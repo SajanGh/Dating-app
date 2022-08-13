@@ -2,7 +2,7 @@ from django.db import models
 import uuid
 from django.dispatch import receiver
 from allauth.account.signals import user_signed_up, user_logged_in
-from user_profile.models import UserProfile
+from user_profile.models import UserProfile, UserDescription, UserInterest
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils import timezone
 import requests
@@ -81,6 +81,8 @@ class User(AbstractBaseUser):
 @receiver(user_signed_up)
 def create_user_profile_instance(user, sociallogin=None, **kwargs):
     UserProfile.objects.create(user=user)
+    UserDescription.objects.create(user=user)
+    UserInterest.objects.create(user=user)
     if sociallogin:
         if sociallogin.account.provider == "google":
             user.profile.first_name = sociallogin.account.extra_data["given_name"]

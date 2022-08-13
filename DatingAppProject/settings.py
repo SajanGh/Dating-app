@@ -126,6 +126,7 @@ WSGI_APPLICATION = "DatingAppProject.wsgi.application"
 
 AUTH_USER_MODEL = "accounts.User"
 
+FILTERS_EMPTY_CHOICE_LABEL = None
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases

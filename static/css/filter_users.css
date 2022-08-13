@@ -125,6 +125,15 @@
     margin: 0;
 }
 
+.inner--content i{
+    color:#FFACE4;
+    cursor: pointer;
+}
+
+.inner--content i:hover{
+    color: #ff2256;
+}
+
 .card-link-right {
     right: 10%;
     position: absolute;
@@ -182,6 +191,7 @@
 
 .row.username-container {
     margin: 0;
+    display: flex;
 }
 
 .row.username-container p {
@@ -208,7 +218,11 @@
     text-align: center;
     font-size: 40px;
     padding: 10px;
-    color: #acd8aa;
+    color: #FFACE4;
+}
+
+.row.interaction-container i:hover {
+    color: #ff726f;
 }
 
 .standard-button {
