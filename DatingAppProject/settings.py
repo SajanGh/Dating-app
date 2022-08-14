@@ -47,6 +47,7 @@ MY_APPS = [
     "accounts.apps.AccountsConfig",
     "user_profile.apps.UserProfileConfig",
     "find_users.apps.FindUsersConfig",
+    "chat.apps.ChatConfig",
 ]
 
 THIRD_PARTY_APPS = [
@@ -62,6 +63,8 @@ THIRD_PARTY_APPS = [
     "django_cleanup",
     # for notification system
     "notifications",
+    # for real time chatting
+    "channels",
 ]
 
 INSTALLED_APPS += MY_APPS + THIRD_PARTY_APPS

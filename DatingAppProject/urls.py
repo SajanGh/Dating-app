@@ -27,6 +27,7 @@ urlpatterns = [
     ),
     path("", include("user_profile.urls")),
     path("filter/", include("find_users.urls")),
+    path("chat/", include("chat.urls")),
 ]
 
 if settings.DEBUG:

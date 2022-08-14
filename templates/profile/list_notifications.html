@@ -1,6 +1,5 @@
 {% for notification in notifications %}
-            <div class="notification-list {% if notification.unread %} notification-list--unread{% endif %}"  data-slug="{{notification.slug}}" onclick="markAsRead()">
-                <a href="{% url 'profile_detail' notification.actor.profile.id %}" class="text-decoration-none">
+            <div class="notification-list {% if notification.unread %} notification-list--unread{% endif %}"  data-slug="{{notification.slug}}" data-user="{{notification.actor.profile.id}}" onclick="markAsRead()">
                     <div class="notification-list_content">
                         <div class="notification-list_img">
                             <img src="{{notification.actor.profile.profile_picture.url}}" alt="user">
@@ -14,6 +13,5 @@
                     <div class="notification-list_feature-img">
                         <a class="btn btn-primary" href="#" role="button">Send back Heart</a>
                     </div>
-                </a>
             </div>
 {% endfor %}
