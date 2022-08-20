@@ -2,7 +2,12 @@ from django.db import models
 import uuid
 from django.dispatch import receiver
 from allauth.account.signals import user_signed_up, user_logged_in
-from user_profile.models import UserProfile, UserDescription, UserInterest
+from user_profile.models import (
+    UserProfile,
+    UserDescription,
+    UserInterest,
+    UserConnection,
+)
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils import timezone
 import requests
@@ -41,6 +46,12 @@ class UserManager(BaseUserManager):
         return user
 
 
+class UserQuerySet(models.QuerySet):
+    def by_email(self, email):
+        qs = User.objects.filter(email=email).first()
+        return qs
+
+
 class User(AbstractBaseUser):
     id = models.UUIDField(
         primary_key=True, default=uuid.uuid4, editable=False, db_index=True
@@ -54,6 +65,7 @@ class User(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
 
     objects = UserManager()
+    get_user = UserQuerySet.as_manager()
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -83,6 +95,7 @@ def create_user_profile_instance(user, sociallogin=None, **kwargs):
     UserProfile.objects.create(user=user)
     UserDescription.objects.create(user=user)
     UserInterest.objects.create(user=user)
+    UserConnection.objects.create(owner=user)
     if sociallogin:
         if sociallogin.account.provider == "google":
             user.profile.first_name = sociallogin.account.extra_data["given_name"]

@@ -318,6 +318,30 @@ a.add img {
     isolation: isolate;
 }
 
+.chat-list img{
+    height:50px;
+    width: 50px;
+    border-radius: 100%;
+    object-fit:contain;
+    border:solid 1px;
+}
+
+.user--image{
+    height:50px;
+    width: 50px;
+    border-radius: 100%;
+    object-fit:contain;
+    border:solid 1px;
+    border-color:blue ;
+}
+
+
+.new--message{
+    background: #FF0000;
+    height: 60px;
+    border-radius: 15px;
+}
+
 .chat-list h3 {
     color: #222;
     font-size: 16px;
@@ -342,13 +366,19 @@ a.add img {
     text-decoration: none;
 }
 
+.chat-list a:hover{
+    background: #ededed;
+    height: 60px;
+    border-radius: 15px;
+}
+
 .chat-list .active {
     display: block;
     content: '';
     clear: both;
     position: absolute;
-    bottom: 3px;
-    left: 34px;
+    bottom: 1px;
+    left: 40px;
     height: 12px;
     width: 12px;
     background: #00DB75;

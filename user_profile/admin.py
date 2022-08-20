@@ -1,6 +1,12 @@
 from turtle import title
 from django.contrib import admin
-from user_profile.models import UserProfile, Heart, UserDescription, UserInterest
+from user_profile.models import (
+    UserProfile,
+    Heart,
+    UserDescription,
+    UserInterest,
+    UserConnection,
+)
 
 
 @admin.register(Heart)
@@ -19,3 +25,4 @@ class UserInterestAdmin(admin.ModelAdmin):
 
 
 admin.site.register(UserProfile)
+admin.site.register(UserConnection)

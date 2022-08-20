@@ -149,6 +149,16 @@ class UserInterest(CommonInfo):
     title = models.CharField(max_length=20, blank=True, null=True)
 
 
+class UserConnection(CommonInfo):
+    owner = models.ForeignKey(
+        UserProfile, on_delete=models.CASCADE, related_name="connections"
+    )
+    user = models.ManyToManyField(UserProfile)
+
+    def __str__(self):
+        return self.owner.user.email
+
+
 class Heart(CommonInfo):
     sent_by = models.ForeignKey(
         UserProfile, on_delete=models.CASCADE, related_name="heart_sender"

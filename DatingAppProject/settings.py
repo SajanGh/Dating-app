@@ -126,6 +126,10 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "DatingAppProject.wsgi.application"
+ASGI_APPLICATION = "DatingAppProject.routing.application"
+CHANNEL_LAYERS = {
+    "default": {"BACKEND": "channels.layers.InMemoryChannelLayer"},
+}
 
 AUTH_USER_MODEL = "accounts.User"
 
