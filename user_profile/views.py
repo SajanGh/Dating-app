@@ -17,7 +17,9 @@ class Index(ListView):
     template_name = "index.html"
 
     def get_queryset(self):
-        queryset = UserProfile.objects.exclude(user=self.request.user)
+        queryset = UserProfile.objects.exclude(user=self.request.user).order_by(
+            "-created_on"
+        )
         return queryset
 
 
@@ -58,7 +60,7 @@ def rightSwipeUser(request):
             notify.send(request.user, recipient=receiver.user, verb="Sent you a heart.")
             return JsonResponse(data)
         else:
-            return HttpResponseBadRequest("Invalid Request", status=400)
+            return JsonResponse({"status": "Invalid Request"}, status=400)
     else:
         return HttpResponseBadRequest("Invalid Request.")
 

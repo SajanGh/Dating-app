@@ -6,6 +6,7 @@ from user_profile.models import (
     UserDescription,
     UserInterest,
     UserConnection,
+    Key,
 )
 
 
@@ -24,5 +25,6 @@ class UserInterestAdmin(admin.ModelAdmin):
     list_display = ["user", "title"]
 
 
+admin.site.register(Key)
 admin.site.register(UserProfile)
 admin.site.register(UserConnection)

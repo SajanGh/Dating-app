@@ -1,4 +1,3 @@
-import email
 import json
 from time import timezone
 from django.utils import timezone
@@ -6,15 +5,30 @@ from django.core.serializers.json import DjangoJSONEncoder
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 from django.contrib.auth import get_user_model
+from DatingAppProject.diffie_hellman import DiffieHellman
+from DatingAppProject.xor import decrypt_message
 from chat.models import PrivateChatThread, PrivateChatMessage
+from user_profile.models import Key
+
 
 User = get_user_model()
+
+
+def get_public_key(target_user):
+    qs = Key.objects.filter(keys_owner=target_user).first()
+    return qs.public_key
+
+
+def get_private_key(user):
+    qs = Key.objects.filter(keys_owner=user).first()
+    return qs.private_key
 
 
 class PrivateChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user_1 = self.scope["user"]
         self.user_2 = self.scope["url_route"]["kwargs"]["userId"]
+        self.public_key = await sync_to_async(get_public_key)(self.user_2)
         self.chat_thread = await sync_to_async(
             PrivateChatThread.objects.get_private_chat_thread
         )(
@@ -23,7 +37,6 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         )
 
         self.other_user_room_group_name = "chat_%s" % self.user_2
-
         self.room_group_name = "chat_%s" % self.user_1.id
 
         await self.channel_layer.group_add(
@@ -32,6 +45,12 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         )
 
         await self.accept()
+
+        await self.send(
+            text_data=json.dumps(
+                {"p_key": self.public_key},
+            )
+        )
 
     async def disconnect(self, code):
         await self.channel_layer.group_discard(
@@ -60,10 +79,16 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             },
         )
 
+        local_private_key = await sync_to_async(get_private_key)(self.user_1)
+        local_shared_key = await sync_to_async(
+            DiffieHellman.generate_shared_key_static
+        )(local_private_key, self.public_key)
+        decrypted_msg = decrypt_message(message, local_shared_key)
+
         await sync_to_async(PrivateChatMessage.objects.create)(
             chat_thread=self.chat_thread,
             sender=self.sender,
-            message_content=message,
+            message_content=decrypted_msg,
             message_type=type,
         )
 
@@ -91,7 +116,9 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                     "message": message,
                     "sent_by": sent_by,
                     "sent_to": sent_to,
-                    "timestamp": timezone.now().strftime("%b %d,%Y, %H:%M %P"),
+                    "timestamp": timezone.localtime(timezone.now()).strftime(
+                        "%b %d, %I:%M %P"
+                    ),
                 },
                 cls=DjangoJSONEncoder,
             )

@@ -492,6 +492,7 @@ a.add img {
     display: block;
     width: 100%;
     text-align: right;
+    right: 30px;
     position: relative;
 }
 

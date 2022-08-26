@@ -7,11 +7,13 @@ from user_profile.models import (
     UserDescription,
     UserInterest,
     UserConnection,
+    Key,
 )
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils import timezone
 import requests
 import json
+from DatingAppProject.diffie_hellman import DiffieHellman
 
 
 class UserManager(BaseUserManager):
@@ -92,15 +94,25 @@ class User(AbstractBaseUser):
 
 @receiver(user_signed_up)
 def create_user_profile_instance(user, sociallogin=None, **kwargs):
-    UserProfile.objects.create(user=user)
-    UserDescription.objects.create(user=user)
-    UserInterest.objects.create(user=user)
-    UserConnection.objects.create(owner=user)
+    user_profile = UserProfile.objects.create(user=user)
+    user_profile.save()
+    UserDescription.objects.create(user=user_profile)
+    UserInterest.objects.create(user=user_profile)
+    UserConnection.objects.create(owner=user_profile)
+    generate_and_store_keys(user)
     if sociallogin:
         if sociallogin.account.provider == "google":
             user.profile.first_name = sociallogin.account.extra_data["given_name"]
             user.profile.last_name = sociallogin.account.extra_data["family_name"]
             user.profile.save()
+
+
+def generate_and_store_keys(sender):
+    dh = DiffieHellman()
+    private_key, public_key = dh.get_private_key(), dh.generate_public_key()
+    Key.objects.create(
+        keys_owner=sender, private_key=private_key, public_key=public_key
+    )
 
 
 @receiver(user_logged_in)

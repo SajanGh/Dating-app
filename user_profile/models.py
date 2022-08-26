@@ -1,5 +1,6 @@
-import datetime
+from datetime import date
 import os
+from pyexpat import model
 import uuid
 
 import math
@@ -96,12 +97,13 @@ class UserProfile(CommonInfo):
     )
 
     def save(self, *args, **kwargs):
-        self.age = self.get_age()
-        self.zodiac = self.get_zodiac()
+        if self.date_of_birth is not None:
+            self.age = self.get_age()
+            self.zodiac = self.get_zodiac()
         super(UserProfile, self).save(*args, **kwargs)
 
     def get_age(self):
-        return int((datetime.datetime.now().date() - self.date_of_birth).days / 365.25)
+        return int((date.today() - self.date_of_birth).days / 365.25)
 
     def get_zodiac(self):
         month = int(self.date_of_birth.strftime("%m"))
@@ -166,3 +168,14 @@ class Heart(CommonInfo):
     received_by = models.ForeignKey(
         UserProfile, on_delete=models.CASCADE, related_name="heart_receiver"
     )
+
+
+class Key(models.Model):
+    keys_owner = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="keys"
+    )
+    private_key = models.TextField(blank=True, null=True)
+    public_key = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.keys_owner.email

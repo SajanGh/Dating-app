@@ -43,3 +43,6 @@ class PrivateChatMessage(CommonInfo):
     message_type = models.CharField(max_length=50, null=True, blank=True)
 
     objects = PrivateChatMessageQueryset.as_manager()
+
+    def __str__(self) -> str:
+        return self.sender.email

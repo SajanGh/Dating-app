@@ -1,5 +1,47 @@
 const logged_in_user =JSON.parse(document.getElementById('logged_in_user').textContent);
+var s_key;
 
+
+//for encryption and decryption
+const XOREncryptDecrypt = (message, keyString) => {
+    const key = keyString.split("");
+    const output = [];
+    for (let i = 0; i < message.length; i++) {
+        const charCode =
+            message.charCodeAt(i) ^ key[i % key.length].charCodeAt(0);
+        output.push(String.fromCharCode(charCode));
+    }
+    return output.join("");
+};
+
+const encrypt = (message, key) =>
+    XOREncryptDecrypt(message, key);
+
+const decrypt = (encryptedMessage, key) =>
+    XOREncryptDecrypt(encryptedMessage, key);
+
+function getSharedKey(p_key){
+    console.log('here')
+    $.ajax({
+        url: "get_shared_key/",
+        type:'GET',
+        headers:{
+            "X-Requested-With": "XMLHttpRequest",
+        },
+        data: {
+            'p_key':p_key,
+        },
+        success:(data)=>{
+            console.log("secret_key_fetched")
+            s_key = data['s_key']
+            console.log(s_key)
+        },
+        error:(error)=>{
+            console.log(error)
+        }
+
+    })
+}
 
 function getChatMessages(user_2){
     $.ajax({
@@ -15,6 +57,7 @@ function getChatMessages(user_2){
             $('.msg-body ul').children().hide()
             $('.msg-body ul').html(data)
             console.log("Chat fetched.")
+            document.querySelector('.chat--messages').scrollIntoView({ behavior: 'smooth', block: 'end' });
         },
         error:(error) => {
             console.log(error)
@@ -32,6 +75,25 @@ function setUserDetail(){
     $('.user--image').attr('src',userImage)
 
 }
+
+function appendMessages(data){
+    var list  = document.createElement('li')
+    var para = document.createElement('p')
+    var chat_span = document.createElement('span')
+    chat_span.className = 'time'
+    chat_span.innerText = data.timestamp
+    para.innerText = decrypt(data.message,s_key)
+    list.appendChild(para)
+    list.appendChild(chat_span)
+    if (data.sent_by == logged_in_user.email){
+        list.className = 'repaly'
+    }else{
+        list.className = 'sender'
+    }
+    $('.chat--messages').append(list)
+    document.querySelector('.chat--messages').scrollIntoView({ behavior: 'smooth', block: 'end' });
+}
+
 
 jQuery(document).ready(function() {
 
@@ -61,7 +123,7 @@ $('.connection').click(function(){
     $('.selected').removeClass('selected')
     $(this).addClass('selected')
     var userId=($(this).attr('data-userId'))
-    
+
     getChatMessages(userId)
     setUserDetail()
 
@@ -99,25 +161,12 @@ function setUpWebSocket (userId){
    
      chatSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
-        if (data.sent_to == $('.selected').attr('data-userId')){
-
-            var list  = document.createElement('li')
-            var para = document.createElement('p')
-            var chat_span = document.createElement('span')
-            chat_span.className = 'time'
-            chat_span.innerText = data.timestamp
-            para.innerText = data.message
-            list.appendChild(para)
-            list.appendChild(chat_span)
-            if (data.sent_by == logged_in_user.email){
-                console.log("maile pathako")
-                list.className = 'repaly'
-            }else{
-                list.className = 'sender'
-            }
-            $('.chat--messages').append(list)
-
-        }
+        if (data.p_key){
+            p_key = data.p_key
+            getSharedKey(p_key)
+        }else{
+            appendMessages(data) 
+        }          
     };
 
     chatSocket.onclose = function(e) {
@@ -129,15 +178,16 @@ function setUpWebSocket (userId){
 
     document.querySelector('#chat-message-submit').onclick = function(e) {
         e.preventDefault()
-        console.log('Send data')
         const messageInputDom = document.querySelector('#chat-message-input');
         const message = messageInputDom.value;
-        chatSocket.send(JSON.stringify({
-            'message': message,
-            'sent_by':logged_in_user['email'],
-            'sent_to': $('.selected').attr('data-userId')
-        }));
-        messageInputDom.value = '';
+        if (message.length != 0){
+            chatSocket.send(JSON.stringify({
+                'message': encrypt(message,s_key),
+                'sent_by':logged_in_user['email'],
+                'sent_to': $('.selected').attr('data-userId')
+            }));
+            messageInputDom.value = '';
+        }
     };
 
 }
