@@ -155,7 +155,7 @@ class UserConnection(CommonInfo):
     owner = models.ForeignKey(
         UserProfile, on_delete=models.CASCADE, related_name="connections"
     )
-    user = models.ManyToManyField(UserProfile)
+    connections = models.ManyToManyField(UserProfile)
 
     def __str__(self):
         return self.owner.user.email

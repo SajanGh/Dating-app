@@ -1,4 +1,4 @@
-from telnetlib import STATUS
+import json
 from django.shortcuts import render
 from django.http import HttpResponseBadRequest, JsonResponse
 from chat.models import PrivateChatThread, PrivateChatMessage
@@ -11,13 +11,13 @@ User = get_user_model()
 
 def ChatBoxView(request):
     logged_in_user = User.objects.values("id", "email").get(id=request.user.id)
-    print(logged_in_user)
 
     connections = UserConnection.objects.filter(owner=request.user.profile).first()
 
     context = {
         "connections": connections,
         "logged_in_user": logged_in_user,
+        "title": "Chat",
     }
     return render(request, "chatbox.html", context)
 
@@ -42,6 +42,11 @@ def get_private_chat(request):
         messages = PrivateChatMessage.objects.get_all_messages(
             chat_thread=private_chat_thread
         )
+        unread_messages = messages.filter(is_read=False, sender=user_2_instance)
+        for message in unread_messages:
+            if request.user != message.sender:
+                message.is_read = True
+                message.save()
         context = {
             "thread_messages": messages,
         }
@@ -68,3 +73,24 @@ def get_shared_key(request):
         return JsonResponse(data, status=200)
     else:
         return HttpResponseBadRequest("Invalid request")
+
+
+def delete_chat_thread(request):
+    is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
+    if is_ajax:
+        if request.method == "DELETE":
+            data = json.load(request)
+            user_2 = data.get("connection")
+            user_2_instance = User.objects.filter(id=user_2).first()
+            private_chat_thread = PrivateChatThread.objects.get_private_chat_thread(
+                request.user, user_2_instance
+            )
+            qs = PrivateChatMessage.objects.get_all_messages(private_chat_thread)
+            qs.delete()
+            return JsonResponse(
+                {"status": "Conversation Deleted Successfully"}, status=200
+            )
+        else:
+            return JsonResponse({"status:Invalid Request"}, status=400)
+    else:
+        return HttpResponseBadRequest("Invalid Request")

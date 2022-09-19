@@ -34,7 +34,6 @@ function getSharedKey(p_key){
         success:(data)=>{
             console.log("secret_key_fetched")
             s_key = data['s_key']
-            console.log(s_key)
         },
         error:(error)=>{
             console.log(error)
@@ -57,7 +56,7 @@ function getChatMessages(user_2){
             $('.msg-body ul').children().hide()
             $('.msg-body ul').html(data)
             console.log("Chat fetched.")
-            document.querySelector('.chat--messages').scrollIntoView({ behavior: 'smooth', block: 'end' });
+            document.querySelector('.msg-body').scrollIntoView({ behavior: 'smooth', block: 'end' });
         },
         error:(error) => {
             console.log(error)
@@ -85,13 +84,38 @@ function appendMessages(data){
     para.innerText = decrypt(data.message,s_key)
     list.appendChild(para)
     list.appendChild(chat_span)
-    if (data.sent_by == logged_in_user.email){
+    if (data.sent_by == logged_in_user.id){
         list.className = 'repaly'
     }else{
         list.className = 'sender'
     }
-    $('.chat--messages').append(list)
-    document.querySelector('.chat--messages').scrollIntoView({ behavior: 'smooth', block: 'end' });
+    if ($('.selected').attr('data-userId') == data.sent_by || $('.selected').attr('data-userId') == data.sent_to ){
+        $('.chat--messages').append(list)
+    }
+    document.querySelector('.msg-body').scrollIntoView({ behavior: 'smooth', block: 'end' });
+}
+
+function showTypingAnimation(data){
+    if ($('.selected').attr('data-userId') === data.sent_by){
+            $('.msg-body > .typing').show()
+            var clearInterval = 900
+            var clearTimerId;
+    
+            clearTimeout(clearTimerId);
+            clearTimerId = setTimeout(function () {
+                $('.typing').hide()
+            }, clearInterval);
+            document.querySelector('.msg-body').scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }else{
+        $('.connection[data-userId='+data.sent_by+'] > .typing').show()
+        var clearInterval = 900
+            var clearTimerId;
+    
+            clearTimeout(clearTimerId);
+            clearTimerId = setTimeout(function () {
+                $('.connection[data-userId='+data.sent_by+'] > .typing').hide()
+            }, clearInterval);
+    }
 }
 
 
@@ -107,6 +131,7 @@ jQuery(document).ready(function() {
     });
 
     $('.connection:first').addClass('selected')
+    $('.typing').hide()
 
     var userId=($('.connection:first').attr('data-userId'))
     getChatMessages(userId)
@@ -164,6 +189,10 @@ function setUpWebSocket (userId){
         if (data.p_key){
             p_key = data.p_key
             getSharedKey(p_key)
+        }else if(data.command === "is_typing"){
+           showTypingAnimation(data)
+        }else if(data.command === "delete_conversation"){
+            getChatMessages($('.selected').attr('data-userId'))
         }else{
             appendMessages(data) 
         }          
@@ -175,6 +204,14 @@ function setUpWebSocket (userId){
 
 
     document.querySelector('#chat-message-input').focus();
+    $('#chat-message-input').keyup(function(){
+        chatSocket.send(JSON.stringify({
+            'type':'chat_message',
+            'command':'is_typing',
+            'sent_by':logged_in_user['id'],
+            'sent_to': $('.selected').attr('data-userId')
+        }))
+    })
 
     document.querySelector('#chat-message-submit').onclick = function(e) {
         e.preventDefault()
@@ -182,8 +219,10 @@ function setUpWebSocket (userId){
         const message = messageInputDom.value;
         if (message.length != 0){
             chatSocket.send(JSON.stringify({
+                'type':'chat_message',
+                'command':'private_chat',
                 'message': encrypt(message,s_key),
-                'sent_by':logged_in_user['email'],
+                'sent_by':logged_in_user['id'],
                 'sent_to': $('.selected').attr('data-userId')
             }));
             messageInputDom.value = '';
@@ -191,3 +230,31 @@ function setUpWebSocket (userId){
     };
 
 }
+
+
+$('#deleteConversation').click(function(){
+    $.ajax({
+        url: "delete_chat/",
+        type:'DELETE',
+        headers:{
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCookie("csrftoken"),
+        },
+        data: JSON.stringify({
+            'connection':$('.selected').attr('data-userId'),
+        }),
+        success:(data)=>{
+            triggerAlert(data["status"], 'success');
+            chatSocket.send(JSON.stringify({
+                'type':'chat_message',
+                'command':'delete_conversation',
+                'sent_by':logged_in_user['id'],
+                'sent_to': $('.selected').attr('data-userId')
+            }))
+        },
+        error:(error)=>{
+            console.log(error)
+        }
+
+    })
+})

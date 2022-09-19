@@ -41,6 +41,7 @@ class PrivateChatMessage(CommonInfo):
     )
     message_content = models.TextField(unique=False, blank=False, null=True)
     message_type = models.CharField(max_length=50, null=True, blank=True)
+    is_read = models.BooleanField(default=False)
 
     objects = PrivateChatMessageQueryset.as_manager()
 

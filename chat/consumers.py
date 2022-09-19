@@ -1,3 +1,4 @@
+import email
 import json
 from time import timezone
 from django.utils import timezone
@@ -60,18 +61,20 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        message = text_data_json["message"]
+        type = text_data_json["type"]
+        command = text_data_json.get("command")
+        message = text_data_json.get("message")
         sent_by = text_data_json["sent_by"]
         sent_to = text_data_json["sent_to"]
-        type = "chat_message"
 
-        self.sender = await sync_to_async(User.get_user.by_email)(email=sent_by)
+        self.sender = await sync_to_async(User.get_user.by_email)(email=self.user_1)
 
         # Send message to room group
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 "type": type,
+                "command": command,
                 "message": message,
                 "sent_by": sent_by,
                 "sent_to": sent_to,
@@ -79,23 +82,25 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             },
         )
 
-        local_private_key = await sync_to_async(get_private_key)(self.user_1)
-        local_shared_key = await sync_to_async(
-            DiffieHellman.generate_shared_key_static
-        )(local_private_key, self.public_key)
-        decrypted_msg = decrypt_message(message, local_shared_key)
+        if command == "private_chat":
+            local_private_key = await sync_to_async(get_private_key)(self.user_1)
+            local_shared_key = await sync_to_async(
+                DiffieHellman.generate_shared_key_static
+            )(local_private_key, self.public_key)
+            decrypted_msg = decrypt_message(message, local_shared_key)
 
-        await sync_to_async(PrivateChatMessage.objects.create)(
-            chat_thread=self.chat_thread,
-            sender=self.sender,
-            message_content=decrypted_msg,
-            message_type=type,
-        )
+            await sync_to_async(PrivateChatMessage.objects.create)(
+                chat_thread=self.chat_thread,
+                sender=self.sender,
+                message_content=decrypted_msg,
+                message_type=type,
+            )
 
         await self.channel_layer.group_send(
             self.other_user_room_group_name,
             {
-                "type": "chat_message",
+                "type": type,
+                "command": command,
                 "message": message,
                 "sent_by": sent_by,
                 "sent_to": sent_to,
@@ -105,6 +110,8 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
 
     # Receive message from room group
     async def chat_message(self, event):
+        type = event["type"]
+        command = event["command"]
         message = event["message"]
         sent_by = event["sent_by"]
         sent_to = event["sent_to"]
@@ -112,7 +119,8 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         await self.send(
             text_data=json.dumps(
                 {
-                    "type": "chat_message",
+                    "type": type,
+                    "command": command,
                     "message": message,
                     "sent_by": sent_by,
                     "sent_to": sent_to,

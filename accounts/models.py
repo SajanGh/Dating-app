@@ -1,7 +1,7 @@
 from django.db import models
 import uuid
 from django.dispatch import receiver
-from allauth.account.signals import user_signed_up, user_logged_in
+from allauth.account.signals import user_signed_up, user_logged_in, user_logged_out
 from user_profile.models import (
     UserProfile,
     UserDescription,
@@ -64,6 +64,7 @@ class User(AbstractBaseUser):
         unique=True,
     )
     is_active = models.BooleanField(default=True)
+    is_online = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
 
     objects = UserManager()
@@ -97,7 +98,7 @@ def create_user_profile_instance(user, sociallogin=None, **kwargs):
     user_profile = UserProfile.objects.create(user=user)
     user_profile.save()
     UserDescription.objects.create(user=user_profile)
-    UserInterest.objects.create(user=user_profile)
+    # UserInterest.objects.create(user=user_profile)
     UserConnection.objects.create(owner=user_profile)
     generate_and_store_keys(user)
     if sociallogin:
@@ -105,6 +106,18 @@ def create_user_profile_instance(user, sociallogin=None, **kwargs):
             user.profile.first_name = sociallogin.account.extra_data["given_name"]
             user.profile.last_name = sociallogin.account.extra_data["family_name"]
             user.profile.save()
+
+
+@receiver(user_logged_in)
+def set_user_online_status(user, **kwargs):
+    user.is_online = True
+    user.save()
+
+
+@receiver(user_logged_out)
+def set_user_offline_status(user, **kwargs):
+    user.is_online = False
+    user.save()
 
 
 def generate_and_store_keys(sender):

@@ -155,3 +155,44 @@ var loveListener = createButtonListener(true);
 
 nope.addEventListener('click', nopeListener);
 love.addEventListener('click', loveListener);
+
+
+
+// ____________________________ SLIDER RANGE_____________________________
+
+function showBlock(){
+  $('.range-body').css('display','block')
+  $('.set-radius').hide()
+}
+
+function closeBtn(){
+  $('.range-body').css('display','none')
+  $('.set-radius').show()
+}
+
+var elem = document.querySelector('input[type="range"]');
+
+var rangeValue = function(){
+  var newValue = elem.value;
+  var target = document.querySelector('.value');
+  target.innerHTML = newValue+" km";
+  $.ajax({
+    url:'filter/by_radius/',
+    type:"GET",
+    headers:{
+      "X-Requested-With": "XMLHttpRequest"
+    },
+    data:{
+      "range": newValue
+    },
+    success:(data)=>{
+      $('.tinder--cards').children().hide()
+      $('.tinder--cards').append(data)
+    },
+    error:(error)=>{
+      console.log(error)
+    }
+  })
+}
+
+elem.addEventListener("input", rangeValue);

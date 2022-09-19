@@ -81,6 +81,7 @@ def list_user_notifications(request):
             notifications = request.user.notifications.all()
             context = {
                 "notifications": notifications,
+                "title": "Notifications",
             }
             return render(request, "profile/base_notifications.html", context)
 
@@ -96,6 +97,7 @@ class UserDetailView(DetailView):
         )
         context["hearts_sent"] = Heart.objects.filter(sent_by=self.kwargs.get("pk"))
         context["interests"] = UserInterest.objects.filter(user=self.kwargs.get("pk"))
+        context["title"] = "Profile"
         return context
 
 
