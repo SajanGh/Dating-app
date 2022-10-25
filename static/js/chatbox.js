@@ -258,3 +258,24 @@ $('#deleteConversation').click(function(){
 
     })
 })
+
+function blockUser(){
+    $.ajax({
+        url: "block_user/",
+        type:'POST',
+        headers:{
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCookie("csrftoken"),
+        },
+        data: {
+            'target_user_id':$('.selected').attr('data-userId'),
+        },
+        success:(data)=>{
+            location.reload(true)
+            // triggerAlert(data["status"], 'success');
+        },
+        error:(error)=>{
+            console.log(error)
+        }
+    })
+}

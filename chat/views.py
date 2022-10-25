@@ -2,9 +2,12 @@ import json
 from django.shortcuts import render
 from django.http import HttpResponseBadRequest, JsonResponse
 from chat.models import PrivateChatThread, PrivateChatMessage
-from user_profile.models import UserConnection, Key
+from user_profile.models import UserConnection, Key, BlockedUser, UserProfile
 from DatingAppProject.diffie_hellman import DiffieHellman
 from django.contrib.auth import get_user_model
+from DatingAppProject.xor import decrypt_message
+from django.db.models import F
+
 
 User = get_user_model()
 
@@ -39,9 +42,18 @@ def get_private_chat(request):
                 user_2=user_2_instance,
             )
             private_chat_thread.save()
+        local_shared_key = DiffieHellman.generate_shared_key_static(
+            request.user.keys.private_key, user_2_instance.keys.public_key
+        )
         messages = PrivateChatMessage.objects.get_all_messages(
             chat_thread=private_chat_thread
         )
+        for message in messages:
+            print(message.message_content)
+            message.message_content = decrypt_message(
+                message.message_content, local_shared_key
+            )
+
         unread_messages = messages.filter(is_read=False, sender=user_2_instance)
         for message in unread_messages:
             if request.user != message.sender:
@@ -92,5 +104,27 @@ def delete_chat_thread(request):
             )
         else:
             return JsonResponse({"status:Invalid Request"}, status=400)
+    else:
+        return HttpResponseBadRequest("Invalid Request")
+
+
+def block_user(request):
+    is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
+
+    if is_ajax:
+        if request.method == "POST":
+            target_user_id = request.POST.get("target_user_id")
+            target_user = User.objects.filter(id=target_user_id).first()
+            if not BlockedUser.objects.filter(owner=request.user.profile):
+                BlockedUser.objects.create(owner=request.user.profile)
+            request.user.profile.blocked_users.users.add(target_user.profile)
+            request.user.profile.connection.connections.remove(target_user.profile)
+            target_user.profile.connection.connections.remove(request.user.profile)
+            return JsonResponse(
+                {"status": "Successfully blocked the user."}, status=200
+            )
+        else:
+            return JsonResponse({"status": "Invalid Request"}, status=400)
+
     else:
         return HttpResponseBadRequest("Invalid Request")

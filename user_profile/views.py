@@ -2,7 +2,15 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.urls import reverse_lazy
 from django.views.generic import UpdateView, ListView, DetailView, CreateView
-from user_profile.models import UserDescription, UserProfile, Heart, UserInterest
+from DatingAppProject.diffie_hellman import DiffieHellman
+from user_profile.models import (
+    UserConnection,
+    UserDescription,
+    UserProfile,
+    Heart,
+    UserInterest,
+    Key,
+)
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from DatingAppProject.decorators import profile_update_required
@@ -11,16 +19,27 @@ from notifications.signals import notify
 decorators = [login_required, profile_update_required]
 
 
-@method_decorator(decorators, name="dispatch")
-class Index(ListView):
-    model = UserProfile
-    template_name = "index.html"
-
-    def get_queryset(self):
-        queryset = UserProfile.objects.exclude(user=self.request.user).order_by(
+@login_required
+@profile_update_required
+def index(request):
+    if request.user.profile.description.looking_for == "BOTH":
+        userprofile_list = UserProfile.objects.exclude(user=request.user).order_by(
             "-created_on"
         )
-        return queryset
+    else:
+        userprofile_list = (
+            UserProfile.objects.filter(
+                gender=request.user.profile.description.looking_for
+            )
+            .exclude(user=request.user)
+            .order_by("-created_on")
+        )
+    userprofiles = [
+        x
+        for x in userprofile_list
+        if x not in request.user.profile.blocked_users.users.all()
+    ]
+    return render(request, "index.html", {"userprofile_list": userprofiles})
 
 
 @method_decorator(login_required, name="dispatch")
@@ -51,12 +70,33 @@ def rightSwipeUser(request):
             data = {}
             if receiver == request.user.profile:
                 data["message"] = "You cannot sent heart to yourself."
+                data["status"] = "error"
                 return JsonResponse(data)
-            data["message"] = "Heart successfully sent."
-            Heart.objects.create(
-                sent_by=request.user.profile,
-                received_by=receiver,
-            )
+            elif Heart.objects.filter(
+                sent_by=request.user.profile, received_by=receiver
+            ):
+                if receiver in request.user.profile.connection.connections.all():
+                    data["message"] = "Already in your connection list."
+                    data["status"] = "error"
+                else:
+                    data["message"] = "Not responded to previous heart sent."
+                    data["status"] = "error"
+                return JsonResponse(data)
+            else:
+                Heart.objects.create(
+                    sent_by=request.user.profile,
+                    received_by=receiver,
+                )
+                data["message"] = "Heart successfully sent."
+                data["status"] = "success"
+                if (
+                    Heart.objects.get_mutual_hearts(
+                        request.user.profile, receiver
+                    ).count()
+                    >= 2
+                ):
+                    request.user.profile.connection.connections.add(receiver)
+                    receiver.connection.connections.add(request.user.profile)
             notify.send(request.user, recipient=receiver.user, verb="Sent you a heart.")
             return JsonResponse(data)
         else:
@@ -126,9 +166,30 @@ class UpdateUserDescription(UpdateView):
         "religion",
         "relationship_status",
         "education",
+        "looking_for",
     ]
     template_name = "profile/update_user_description.html"
 
     def get_success_url(self):
         pk = self.request.user.profile.id
         return reverse_lazy("profile_detail", kwargs={"pk": pk})
+
+
+@login_required
+def testing(request):
+    user_1_public_key = request.user.keys.public_key
+    user_2_keys = Key.objects.exclude(keys_owner=request.user).first()
+    user_2_shared_key = DiffieHellman.generate_shared_key_static(
+        user_2_keys.private_key, user_1_public_key
+    )
+    user_1_shared_key = DiffieHellman.generate_shared_key_static(
+        request.user.keys.private_key, user_2_keys.public_key
+    )
+    context = {
+        "user_1_private_key": request.user.keys.private_key,
+        "user_1_public_key": user_1_public_key,
+        "user_2_keys": user_2_keys,
+        "user_2_shared_key": user_2_shared_key,
+        "user_1_shared_key": user_1_shared_key,
+    }
+    return render(request, "testing.html", context)

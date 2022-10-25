@@ -20,4 +20,5 @@ class UserFilter(django_filters.FilterSet):
             "description__religion",
             "description__relationship_status",
             "description__education",
+            "interest__title",
         ]

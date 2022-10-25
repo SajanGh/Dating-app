@@ -8,6 +8,7 @@ from user_profile.models import (
     UserInterest,
     UserConnection,
     Key,
+    BlockedUser,
 )
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils import timezone
@@ -98,7 +99,7 @@ def create_user_profile_instance(user, sociallogin=None, **kwargs):
     user_profile = UserProfile.objects.create(user=user)
     user_profile.save()
     UserDescription.objects.create(user=user_profile)
-    # UserInterest.objects.create(user=user_profile)
+    BlockedUser.objects.create(owner=user_profile)
     UserConnection.objects.create(owner=user_profile)
     generate_and_store_keys(user)
     if sociallogin:

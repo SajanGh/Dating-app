@@ -7,6 +7,7 @@ from user_profile.models import (
     UserInterest,
     UserConnection,
     Key,
+    BlockedUser,
 )
 
 
@@ -28,3 +29,4 @@ class UserInterestAdmin(admin.ModelAdmin):
 admin.site.register(Key)
 admin.site.register(UserProfile)
 admin.site.register(UserConnection)
+admin.site.register(BlockedUser)

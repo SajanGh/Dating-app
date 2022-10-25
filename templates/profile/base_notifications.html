@@ -50,10 +50,26 @@ function markAsRead() {
             "X-CSRFToken": getCookie("csrftoken"),
             },
             data:{
-            "receiver":user_id
+            "receiver":user_id,
             },
             success:(data) => { 
-                triggerAlert(data["message"], 'success');
+                triggerAlert(data["message"], data["status"]);
+                $.ajax({
+                    type:"POST",
+                    url:"/inbox/notifications/mark-as-read/"+slug+"/",
+                    headers:{
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRFToken": getCookie("csrftoken"),
+                    },
+                    data:{
+                    },
+                    success:(data) => {
+                        console.log("Marked as read")
+                    },
+                    error:(error) => {
+                    console.log(error)
+                    }
+                })
             },
             error:(error) => {
                 console.log(error)

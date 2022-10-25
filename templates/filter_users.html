@@ -14,6 +14,7 @@
         <button class="btn btn-primary mx-2" onclick="clearSelected()" type="button">Clear</button>
         <input type="number" class="form-control" placeholder="Enter age" name="age" id="age">
         <input type="text" class="form-control" placeholder="Enter location" name="address" id="address">
+        <input type="text" class="form-control" placeholder="Enter a interest" name="interest__title" id="interest">
         <select class="form-select" aria-label="Default select example" id="gender" name="gender">
             <option selected>Select Gender</option>
             {% for x,y in filter.form.fields.gender.choices %}
@@ -162,7 +163,7 @@
             "receiver":receiver
             },
             success:(data) => { 
-                triggerAlert(data["message"], 'success');
+                triggerAlert(data["message"], data["status"]);
             },
             error:(error) => {
                 console.log(error)

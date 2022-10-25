@@ -87,12 +87,12 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             local_shared_key = await sync_to_async(
                 DiffieHellman.generate_shared_key_static
             )(local_private_key, self.public_key)
-            decrypted_msg = decrypt_message(message, local_shared_key)
+            # decrypted_msg = decrypt_message(message, local_shared_key)
 
             await sync_to_async(PrivateChatMessage.objects.create)(
                 chat_thread=self.chat_thread,
                 sender=self.sender,
-                message_content=decrypted_msg,
+                message_content=message,
                 message_type=type,
             )
 
