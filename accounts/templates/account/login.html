@@ -1,57 +1,109 @@
-{% extends 'base.html' %}
-{% load socialaccount %}
-
-{% block css %}
+{% extends 'base.html' %} {% load socialaccount %} {% block css %}
 
 <style>
-    .col1,.col2{
-        height: 100vh;
-        opacity: 0.5;
-    }
-    .col1{
-        background-color: #B4CDED;
-    }
-    .col2{
-        background-color: #B88C9E;
-    }
-    .content{
-        position: absolute;
-        top: 30%;
-        left: 50%;
-        transform: translate(-50%,50%);
-    }
+  body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  .content {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .content h1 {
+    color: rgb(247, 247, 247);
+    font-size: 80px;
+    font-weight: 400;
+  }
+  .navbar {
+    display: flex;
+
+    position: absolute;
+    top: 0;
+
+    z-index: 999;
+    width: 97vw;
+  }
+
+  .left {
+    display: flex;
+    align-items: center;
+    color: white;
+    gap: 20px;
+  }
+
+  .left img {
+    width: 50px;
+    background-color: none;
+    opacity: 0.9;
+  }
+  .left a {
+    font-size: 20px;
+    color: white;
+    text-decoration: none;
+  }
+
+  .container {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 0px;
+  }
+
+  .image {
+    filter: brightness(50%);
+    width: 100vw;
+    height: 117vh;
+    object-fit: cover;
+    opacity: 1;
+  }
 </style>
 
-{% endblock %}
+{% endblock %} {% block content %}
 
-{% block content %}
+<div class="container">
+  <div class="navbar">
+    <div class="left">
+      <img
+        src="https://yt3.googleusercontent.com/ytc/AOPolaQ2iMmw9cWFFjnwa13nBwtZQbl-AqGYkkiTqNaTLg=s900-c-k-c0x00ffffff-no-rj"
+        class="logo"
+        alt="fireship-logo"
+      />
+      <h3>Dating App</h3>
+      <a href="">About us</a>
+      <a href="">Terms </a>
+      <a href="">Contact</a>
+      <a href="">Learn</a>
+    </div>
+    <div class="login">
+      <a
+        class="btn btn-lg btn-secondary"
+        href="{% provider_login_url 'google' %}?next=/"
+        ><i class="fa-brands fa-google pe-2"></i> Login</a
+      >
+    </div>
+  </div>
+  <img
+    class="image"
+    src="../../../static/images/tinder.webp"
+    alt="tinder-frontpage"
+  />
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col1 col">
-        </div>
-        <div class="col2 col">
-        </div>
-    </div>
-    <div class="content d-flex flex-column justify-content-center align-items-center gap-3">
-        <h1 class="display-2">Connecting hearts</h1>
-        <a class="btn btn-lg btn-primary" href="{% provider_login_url 'google' %}"><i class="fa-brands fa-google pe-2"></i>Sign In</a>
-    </div>
+  <div class="content">
+    <h1 class="display-2">Start something epic</h1>
+    <!-- <h1 class="display-2">Connecting hearts</h1> -->
+
+    <a
+      class="btn btn-lg btn-primary"
+      href="{% provider_login_url 'google' %}?next=/"
+      ><i class="fa-brands fa-google pe-2"></i> Register</a
+    >
+  </div>
 </div>
-   
 
-
-<!-- <div class="container rounded d-flex justify-content-center align-items-center flex-column">
-    <div class="row justify-content-center mt-5">
-        <div class="col-md-10 col-sm-12 text-center mt-5">
-            <h1 class="display-2">Connecting hearts</h1>
-        </div>
-        <div class="d-flex justify-content-center mt-5">
-            <a class="btn btn-lg btn-primary mr-2" href="{% provider_login_url 'google' %}"><i class="fa-brands fa-google pe-2"></i>Sign In</a>
-        </div>
-    </div>
-</div> -->
-  
-
-    
 {% endblock %}

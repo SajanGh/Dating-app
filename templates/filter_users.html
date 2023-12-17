@@ -1,15 +1,109 @@
-{%extends 'base.html'%} 
-{% load static %} 
+{%extends 'base.html'%}
+{% load static %}
 {% load custom_tags %}
 
 {% block css %}
 
 <link rel="stylesheet" href="{% static 'css/filter_users.css' %}">
+
+<!-- <style>
+    .main-container{
+        display: flex;
+/*  */
+flex-wrap:wrap;
+
+
+
+    }
+    #filtering{
+        width: 30%;
+        /*  */
+        min-width:300px
+    }
+    form{
+        /* width: 30%; */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-flow:row wrap;
+background-color:azure;
+
+
+
+
+
+        /* flex-direction: column; */
+        gap:5px;
+    }
+#profile-container{
+    width: 100%;
+
+background-color:beige;
+}
+#row{
+    display: flex;
+width: 100%;
+    /* gap:50px; */
+}
+</style> -->
+
+
+<style>
+    .main-container {
+        display: flex;
+    }
+
+    #filtering {
+        width: 30%;
+        min-width: 300px;
+        flex-shrink: 0;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        /* background-color: azure; */
+        padding: 10px; /* Add padding for spacing */
+    }
+
+    #profile-container {
+        flex: 1;
+        /* background-color: beige; */
+        padding: 10px; /* Add padding for spacing */
+        margin-left: 10px; /* Add some margin to separate it from the filter section */
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center content horizontally */
+        justify-content: flex-start; /
+    }
+    .card-container {
+        width: 110%; /* Make the card container full width */
+
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center content horizontally */
+    }
+
+    .card-img {
+        width: 100%;
+        height: auto; /* Automatically adjust the height while maintaining aspect ratio */
+        background-size: cover;
+        background-position: center center;
+    }
+
+    #row {
+        display: flex;
+        flex-wrap: wrap; /* Allow profiles to wrap to the next line */
+        gap: 10px; /* Add gap between profiles */
+    }
+</style>
+
 {% endblock %}
 
 {% block content %}
-
-<div class="container-fluid my-5">
+<div class="main-container">
+<div class="container-fluid my-5" id="filtering" >
     <form method="post" class="d-flex">
         <button class="btn btn-primary mx-2" onclick="clearSelected()" type="button">Clear</button>
         <input type="number" class="form-control" placeholder="Enter age" name="age" id="age">
@@ -80,13 +174,13 @@
 </div>
 
 <!--Filtered profiles-->
-<div class="container-fluid content">
-    <div class="row">
+<div class="container-fluid content" id="row">
+    <div class="row" >
         {% if not filter.qs %}
         <p class="centered-text">No match found. Try adjusting your filters.</p>
-        {% endif %} 
+        {% endif %}
         {% for user_profile in filter.qs %}
-        <div class="card-container col-sm-12 col-md-6 col-lg-3">
+        <div class="card-container col-sm-12 col-md-6 col-lg-3" id="profile-container">
             <div class="card four-cards">
                 <a class="card-link card-link-wrapper" href="{% url 'profile_detail' user_profile.id %}">
                     <div class="card-img four-cards" style="background-image: url({{user_profile.profile_picture.url}})" ></div>
@@ -139,7 +233,7 @@
                 "X-Requested-With": "XMLHttpRequest",
                 "X-CSRFToken": getCookie("csrftoken"),
             },
-            success:(data) => { 
+            success:(data) => {
                 console.log(formData)
                 $(".content").children().hide()
                 $(".content").html(data)
@@ -162,7 +256,7 @@
             data:{
             "receiver":receiver
             },
-            success:(data) => { 
+            success:(data) => {
                 triggerAlert(data["message"], data["status"]);
             },
             error:(error) => {

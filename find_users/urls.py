@@ -6,3 +6,5 @@ urlpatterns = [
     path("users/", FilterUser, name="filter_user"),
     path("by_radius/", get_users_by_raduis),
 ]
+
+

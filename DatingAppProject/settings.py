@@ -28,51 +28,59 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["127.0.0.1","localhost"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "django.contrib.sites",
+"django.contrib.admin",
+"django.contrib.auth",
+"django.contrib.contenttypes",
+"django.contrib.sessions",
+"django.contrib.messages",
+"django.contrib.staticfiles",
+"django.contrib.sites",
+#
+# "allauth",
+# "allauth.account",
+# "allauth.socialaccount",
+# "allauth.socialaccount.providers.google"
 ]
+SITE_ID = 1
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
 
 MY_APPS = [
-    "accounts.apps.AccountsConfig",
-    "user_profile.apps.UserProfileConfig",
-    "find_users.apps.FindUsersConfig",
-    "chat.apps.ChatConfig",
+"accounts.apps.AccountsConfig",
+"user_profile.apps.UserProfileConfig",
+"find_users.apps.FindUsersConfig",
+"chat.apps.ChatConfig",
 ]
 
 THIRD_PARTY_APPS = [
-    # Social Login Packages
-    "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "allauth.socialaccount.providers.google",
-    # Django Crispy Forms
-    "crispy_forms",
-    "crispy_bootstrap5",
-    # for cleaning old files and images after update
-    "django_cleanup",
-    # for notification system
-    "notifications",
-    # for real time chatting
-    "channels",
+# Social Login Packages
+"allauth",
+"allauth.account",
+"allauth.socialaccount",
+"allauth.socialaccount.providers.google",
+# Django Crispy Forms
+"crispy_forms",
+"crispy_bootstrap5",
+# for cleaning old files and images after update
+"django_cleanup",
+# for notification system
+"notifications",
+# for real time chatting
+"channels",
 ]
 
 INSTALLED_APPS += MY_APPS + THIRD_PARTY_APPS
 
 # Social login settings
 AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
-    "allauth.account.auth_backends.AuthenticationBackend",
+"django.contrib.auth.backends.ModelBackend",
+"allauth.account.auth_backends.AuthenticationBackend",
 ]
 
 SITE_ID = 1
@@ -86,49 +94,50 @@ SOCIALACCOUNT_LOGIN_ON_GET = True
 ACCOUNT_LOGOUT_ON_GET = True
 
 SOCIALACCOUNT_PROVIDERS = {
-    "google": {
-        "SCOPE": [
-            "profile",
-            "email",
-        ],
-        "AUTH_PARAMS": {
-            "access_type": "online",
-        },
-    }
+"google": {
+"SCOPE": [
+"profile",
+"email",
+],
+"AUTH_PARAMS": {
+"access_type": "online",
+},
+}
 }
 
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+"django.middleware.security.SecurityMiddleware",
+"django.contrib.sessions.middleware.SessionMiddleware",
+"django.middleware.common.CommonMiddleware",
+"django.middleware.csrf.CsrfViewMiddleware",
+"django.contrib.auth.middleware.AuthenticationMiddleware",
+"django.contrib.messages.middleware.MessageMiddleware",
+"django.middleware.clickjacking.XFrameOptionsMiddleware",
+
 ]
 
 ROOT_URLCONF = "DatingAppProject.urls"
 
 TEMPLATES = [
-    {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "context_processors": [
-                "django.template.context_processors.debug",
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
-            ],
-        },
-    },
+{
+"BACKEND": "django.template.backends.django.DjangoTemplates",
+"DIRS": [BASE_DIR / "templates"],
+"APP_DIRS": True,
+"OPTIONS": {
+"context_processors": [
+"django.template.context_processors.debug",
+"django.template.context_processors.request",
+"django.contrib.auth.context_processors.auth",
+"django.contrib.messages.context_processors.messages",
+],
+},
+},
 ]
 
 WSGI_APPLICATION = "DatingAppProject.wsgi.application"
 ASGI_APPLICATION = "DatingAppProject.routing.application"
 CHANNEL_LAYERS = {
-    "default": {"BACKEND": "channels.layers.InMemoryChannelLayer"},
+"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"},
 }
 
 AUTH_USER_MODEL = "accounts.User"
@@ -139,18 +148,18 @@ FILTERS_EMPTY_CHOICE_LABEL = None
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    # "default": {
-    #     "ENGINE": "django.db.backends.sqlite3",
-    #     "NAME": BASE_DIR / "db.sqlite3",
-    # }
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "datingapp",
-        "USER": "postgres",
-        "PASSWORD": "postgres",
-        "HOST": "localhost",
-        "PORT": "",
-    }
+"default": {
+"ENGINE": "django.db.backends.sqlite3",
+"NAME": BASE_DIR / "db.sqlite3",
+}
+# "default": {
+# "ENGINE": "django.db.backends.postgresql",
+# "NAME": "datingapp",
+# "USER": "postgres",
+# "PASSWORD": "postgres",
+# "HOST": "localhost",
+# "PORT": "",
+# }
 }
 
 
@@ -158,18 +167,18 @@ DATABASES = {
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
+{
+"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+},
+{
+"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+},
+{
+"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+},
+{
+"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+},
 ]
 
 

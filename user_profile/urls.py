@@ -1,3 +1,6 @@
+
+
+
 from django.urls import path
 from user_profile.views import (
     index,
@@ -23,4 +26,6 @@ urlpatterns = [
         UpdateUserDescription.as_view(),
         name="update_description",
     ),
+
 ]
+
