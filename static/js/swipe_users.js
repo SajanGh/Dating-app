@@ -30,7 +30,7 @@ function initCards(card, index) {
     card.style.transform = 'scale(' + (20 - index) / 20 + ') translateY(-' + 30 * index + 'px)';
     card.style.opacity = (10 - index) / 10;
   });
-  
+
   tinderContainer.classList.add('loaded');
 }
 
@@ -84,7 +84,7 @@ allCards.forEach(function (el) {
   });
 
   hammertime.on('swiperight',function(event){
-     // ajax request for right swiping user 
+     // ajax request for right swiping user
      var receiver = ($(el).find(".info").attr("data-id"))
      $.ajax({
        type:"POST",
@@ -96,7 +96,7 @@ allCards.forEach(function (el) {
        data:{
          "receiver":receiver
        },
-       success:(data) => { 
+       success:(data) => {
         triggerAlert(data["message"], 'success');
        },
        error:(error) => {
@@ -119,8 +119,8 @@ function createButtonListener(love) {
 
     if (love) {
       card.style.transform = 'translate(' + moveOutWidth + 'px, -100px) rotate(-30deg)';
-      
-      // ajax request for right swiping user 
+
+      // ajax request for right swiping user
       var receiver = ($(card).find(".info").attr("data-id"))
       $.ajax({
         type:"POST",
@@ -132,7 +132,7 @@ function createButtonListener(love) {
         data:{
           "receiver":receiver
         },
-        success:(data) => { 
+        success:(data) => {
           triggerAlert(data["message"], 'success');
         },
         error:(error) => {

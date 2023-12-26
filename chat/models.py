@@ -47,3 +47,5 @@ class PrivateChatMessage(CommonInfo):
 
     def __str__(self) -> str:
         return self.sender.email
+
+

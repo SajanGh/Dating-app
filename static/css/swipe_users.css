@@ -1,5 +1,5 @@
-body{
-  background-color:#52B9A8;
+body {
+  background-color: #52b9a8;
 }
 .tinder {
   width: 100%;
@@ -61,7 +61,7 @@ body{
   width: 90vw;
   max-width: 400px;
   height: 50vh;
-  background: #FFFFFF;
+  background: #ffffff;
   padding-bottom: 40px;
   border-radius: 8px;
   overflow: hidden;
@@ -82,11 +82,11 @@ body{
 
 .tinder--card img {
   max-width: 100%;
-  opacity:0.9;
+  opacity: 0.9;
   pointer-events: none;
 }
 
-.tinder--card .info{
+.tinder--card .info {
   position: absolute;
   pointer-events: none;
   color: white;
@@ -114,7 +114,7 @@ body{
   line-height: 60px;
   width: 60px;
   border: 0;
-  background: #FFFFFF;
+  background: #ffffff;
   display: inline-block;
   margin: 0 8px;
 }
@@ -129,24 +129,21 @@ body{
 }
 
 .fa-heart {
-  color: #FFACE4;
+  color: #fface4;
 }
 
 .fa-remove {
-  color: #CDD6DD;
+  color: #cdd6dd;
 }
 
-.fa-heart:hover, .fa-remove:hover {
+.fa-heart:hover,
+.fa-remove:hover {
   color: #ff2256;
 }
 
-
-
-
-
 @import url(https://fonts.googleapis.com/css?family=Dosis:700);
 .range-body {
-  font-family: "Dosis", Helvetica, Arial, sans-serif; 
+  font-family: "Dosis", Helvetica, Arial, sans-serif;
   background: #ecf0f1;
   color: #34495e;
   margin-top: 40px;
@@ -155,7 +152,7 @@ body{
   position: relative;
   display: none;
 }
-.range-body p{
+.range-body p {
   text-align: center;
 }
 .value {
@@ -163,11 +160,11 @@ body{
   text-align: center;
   font-weight: bold;
   font-size: 8em;
-  width: 300px; 
+  width: 300px;
   height: 100px;
   line-height: 60px;
   margin: 40px auto;
-  letter-spacing: -.07em;
+  letter-spacing: -0.07em;
   text-shadow: white 2px 2px 2px;
 }
 input[type="range"] {
@@ -188,27 +185,25 @@ input[type="range"]::-webkit-slider-thumb {
   border-radius: 50%;
   border: 2px solid white;
   cursor: pointer;
-  transition: .3s ease-in-out;
-}​
-  input[type="range"]::-webkit-slider-thumb:hover {
-    background-color: white;
-    border: 2px solid #e74c3c;
-  }
-  input[type="range"]::-webkit-slider-thumb:active {
-    transform: scale(1.6);
-  }
-
-
-
-
-@media only screen and (max-width:1650px) {
-    .swipe--info--left,.swipe--info--right{
-      visibility: hidden;
-    }
+  transition: 0.3s ease-in-out;
+}
+​ input[type="range"]::-webkit-slider-thumb:hover {
+  background-color: white;
+  border: 2px solid #e74c3c;
+}
+input[type="range"]::-webkit-slider-thumb:active {
+  transform: scale(1.6);
 }
 
-@media only screen and (max-width:800px){
-  .tinder{
+@media only screen and (max-width: 1650px) {
+  .swipe--info--left,
+  .swipe--info--right {
+    visibility: hidden;
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  .tinder {
     margin-top: 40px;
   }
 }
